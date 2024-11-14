@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Knight's Tour Game with Backtracking</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="game-container">
+        <h1>Knight's Tour Game</h1>
+        
+        <!-- Board size input -->
+        <label for="boardSize">Enter Board Size (e.g., 8 for 8x8):</label>
+        <input type="number" id="boardSizeInput" min="3" max="15" value="8">
+        
+        <canvas id="boardCanvas"></canvas>
+        
+        <div class="controls">
+            <button id="resetBtn">Reset Game</button>
+            <button id="undoBtn">Undo Move</button>
+        </div>
+        
+        <p id="status">Move Count: <span id="moveCount">0</span></p>
+        <div id="timer">Time: <span id="timerDisplay">00:00</span></div>
+    </div>
+    <script src="game.js"></script>
+</body>
+</html>
