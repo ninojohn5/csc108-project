@@ -67,8 +67,6 @@ button:disabled {
     background-color: #ccc;
 }
 
-
-
 .controls {
     display: flex;
     justify-content: center;
@@ -113,8 +111,6 @@ p {
     opacity: 0; 
     transition: opacity 0.2s ease-in-out; 
 }
-
-
 
 #loadingScreen {
     position: fixed;

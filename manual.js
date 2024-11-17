@@ -221,5 +221,6 @@ startGameBtn.addEventListener('click', function() {
     gameContainer.classList.add('visible');
 });
 
+
 // Initialize the board
 initBoard();
