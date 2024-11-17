@@ -221,35 +221,6 @@ startGameBtn.addEventListener('click', function() {
     gameContainer.classList.add('visible');
 });
 
-// Handle button clicks to switch between algorithms
-const solveBacktrackingBtn = document.getElementById('solveBacktrackingBtn');
-const solveWarnsdorffBtn = document.getElementById('solveWarnsdorffBtn');
-
-solveBacktrackingBtn.addEventListener('click', function() {
-    const path = solveBacktracking(board, startX, startY);
-    if (path) {
-        path.forEach(([x, y], index) => {
-            board[x][y] = index + 1; // Mark the path on the board
-        });
-        drawBoard(); // Draw the updated board
-    } else {
-        displayError("No solution found using backtracking.");
-    }
-});
-
-solveWarnsdorffBtn.addEventListener('click', function() {
-    const path = solveWarnsdorff(board, startX, startY);
-    if (path) {
-        path.forEach(([x, y], index) => {
-            board[x][y] = index + 1; // Mark the path on the board
-        });
-        drawBoard(); // Draw the updated board
-    } else {
-        displayError("No solution found using Warnsdorff's algorithm.");
-    }
-});
-
-
 
 // Initialize the board
 initBoard();
