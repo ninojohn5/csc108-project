@@ -20,13 +20,10 @@
             <p>Embark on a journey with the knight!</p>
             <img src="https://i.postimg.cc/zvRyNn34/black-knight-chess-piece-3d-design-free-png.webp" alt="Knight" id="animatedKnight">
         </div>
-       
         <button id="startGameBtn">Start Game</button>
-        <button id="startAutoPlayBtn">Auto-Play</button>
-
     </div>
 
-    <!-- Game Container (Initially hidden) -->
+    <!-- Game Container -->
     <div id="game-container">
         <h1>Knight's Tour Game</h1>
         
@@ -54,10 +51,14 @@
         <div class="auto-play-container">
             <button id="startAutoPlayBtn">Auto-Play?</button>
         </div>
-
     </div>
 
-    <div id="errorMessage" style="display: none;"></div>
+    <!-- Auto-Play Dialog -->
+    <div id="autoPlayDialog" class="hidden">
+        <p>Choose an algorithm:</p>
+        <button id="backtrackingBtn">Backtracking</button>
+        <button id="warnsdorffBtn">Warnsdorff's Algorithm</button>
+    </div>
 
     <script src="manual.js"></script>
 </body>

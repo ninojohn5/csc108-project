@@ -16,7 +16,13 @@ const resetBtn = document.getElementById('resetBtn');
 const undoBtn = document.getElementById('undoBtn');
 const errorMessageElement = document.getElementById('errorMessage');
 
-window.onload = function() {
+// Auto-Play Button and Dialog
+const autoPlayDialog = document.getElementById('autoPlayDialog');
+const startAutoPlayBtn = document.getElementById('startAutoPlayBtn');
+const backtrackingBtn = document.getElementById('backtrackingBtn');
+const warnsdorffBtn = document.getElementById('warnsdorffBtn');
+
+window.onload = function () {
     // Simulating the game initialization completion
     setTimeout(() => {
         // Hide the loading screen after everything is loaded
@@ -96,7 +102,6 @@ function calculatePossibleMoves(x, y) {
             possibleMoves.push([nx, ny]);
         }
     }
-    console.log(possibleMoves);  // Debug log to check possible moves
 
     // Game over condition: No possible moves left, and not all squares visited
     if (possibleMoves.length === 0 && path.length !== rows * cols) {
@@ -116,28 +121,24 @@ canvas.addEventListener('click', function (event) {
     const x = Math.floor((event.clientY - rect.top) / squareSize);
     const y = Math.floor((event.clientX - rect.left) / squareSize);
 
-    // Only allow clicks inside the board area (within bounds of rows and columns)
     if (x >= 0 && x < rows && y >= 0 && y < cols) {
         if (startX === -1 && startY === -1) {
-            // Set the initial knight position
             startX = x;
             startY = y;
             board[x][y] = path.length + 1;
             path.push([x, y]);
-            calculatePossibleMoves(x, y);  // Check for possible moves after setting the initial position
+            calculatePossibleMoves(x, y);
             clearError();
             drawBoard();
         } else if (possibleMoves.some(([nx, ny]) => nx === x && ny === y)) {
-            // Move the knight
             startX = x;
             startY = y;
             board[x][y] = path.length + 1;
             path.push([x, y]);
-            calculatePossibleMoves(x, y);  // Check for possible moves after each move
+            calculatePossibleMoves(x, y);
             clearError();
             drawBoard();
 
-            // Check if the tour is complete (all squares visited)
             if (path.length === rows * cols) {
                 displayError("Congratulations! You've completed the Knight's Tour!");
             }
@@ -145,12 +146,9 @@ canvas.addEventListener('click', function (event) {
     }
 });
 
-
-
 // Undo the last move
 function undoMove() {
     if (path.length > 1) {
-        // If there are moves to undo, remove the last move
         const [prevX, prevY] = path.pop();
         board[prevX][prevY] = 0;
         const [lastX, lastY] = path[path.length - 1];
@@ -160,46 +158,214 @@ function undoMove() {
         drawBoard();
         clearError();
     } else if (path.length === 1) {
-        // If there's only the starting position left, remove it
         const [initialX, initialY] = path.pop();
         board[initialX][initialY] = 0;
         startX = startY = -1;
-        possibleMoves = []; // Clear possible moves
+        possibleMoves = [];
         drawBoard();
         clearError();
     } else {
-        // No moves left to undo, clear the board completely and display error message
         displayError("No moves to undo! The board has been cleared.");
-        board = Array.from({ length: rows }, () => Array(cols).fill(0)); // Reset the board
+        board = Array.from({ length: rows }, () => Array(cols).fill(0));
         path = [];
         startX = startY = -1;
-        possibleMoves = []; // Clear possible moves
-        drawBoard(); // Redraw the cleared board
+        possibleMoves = [];
+        drawBoard();
     }
 }
 
 function displayError(message) {
-    console.log("Error displayed:", message); // Debug log
-    errorMessageElement.innerText = message; // Set the error message text
-    errorMessageElement.style.display = 'block'; // Ensure the element is visible
+    errorMessageElement.innerText = message;
+    errorMessageElement.style.display = 'block';
     setTimeout(() => {
-        errorMessageElement.style.opacity = 1; // Fade in
-    }, 10); // Small timeout for the transition effect
-    errorMessageElement.style.pointerEvents = 'auto'; // Allow interactions
+        errorMessageElement.style.opacity = 1;
+    }, 10);
+    errorMessageElement.style.pointerEvents = 'auto';
 }
 
-// Only hide the error when explicitly clicked
 errorMessageElement.addEventListener('click', function () {
-    clearError(); // Attach clear logic to user click
+    clearError();
 });
 
 function clearError() {
-    errorMessageElement.style.opacity = 0; // Fade out
+    errorMessageElement.style.opacity = 0;
     setTimeout(() => {
-        errorMessageElement.style.display = 'none'; // Hide after transition
-    }, 10000000); 
-    errorMessageElement.style.pointerEvents = 'none'; // Disable interactions
+        errorMessageElement.style.display = 'none';
+    }, 10000000);
+    errorMessageElement.style.pointerEvents = 'none';
 }
+
+// Auto-Play Button Logic
+startAutoPlayBtn.addEventListener('click', () => {
+    autoPlayDialog.classList.remove('hidden');
+});
+
+backtrackingBtn.addEventListener('click', () => {
+    autoPlayDialog.classList.add('hidden');
+    console.log("Backtracking Algorithm Selected");
+    if (startX === -1 || startY === -1) {
+        displayError("Please select a starting position before running the algorithm.");
+        return;
+    }
+    solveBacktracking(startX, startY);
+});
+
+warnsdorffBtn.addEventListener('click', () => {
+    autoPlayDialog.classList.add('hidden');
+    console.log("Warnsdorff's Algorithm Selected");
+    if (startX === -1 || startY === -1) {
+        displayError("Please select a starting position before running the algorithm.");
+        return;
+    }
+    solveWarnsdorff(startX, startY);
+});
+
+// Flag for active auto-play
+let isAutoPlaying = false;
+
+// Backtracking Algorithm with highlighted possible moves
+function solveBacktrackingAuto(x, y, moveCount = 1) {
+    if (isAutoPlaying) {
+        return; // Avoid overlapping execution
+    }
+    isAutoPlaying = true;
+
+    function nextMove() {
+        if (moveCount > rows * cols) {
+            displayError("Congratulations! The Knight's Tour is completed using Backtracking!");
+            isAutoPlaying = false;
+            return;
+        }
+
+        board[x][y] = moveCount;
+        path.push([x, y]);
+        calculatePossibleMoves(x, y); // Highlight possible moves
+        drawBoard();
+
+        if (moveCount === rows * cols) {
+            displayError("Congratulations! The Knight's Tour is completed using Backtracking!");
+            isAutoPlaying = false;
+            return;
+        }
+
+        for (let i = 0; i < 8; i++) {
+            const nextX = x + moveX[i];
+            const nextY = y + moveY[i];
+
+            if (isWithinBounds(nextX, nextY) && board[nextX][nextY] === 0) {
+                setTimeout(() => {
+                    moveCount++;
+                    x = nextX;
+                    y = nextY;
+                    nextMove();
+                }, 500); // Auto-move every 500ms
+                return;
+            }
+        }
+
+        // Backtrack if no moves are available
+        board[x][y] = 0;
+        path.pop();
+        moveCount--;
+        const [prevX, prevY] = path[path.length - 1];
+        x = prevX;
+        y = prevY;
+
+        setTimeout(nextMove, 500); // Continue backtracking automatically
+    }
+
+    nextMove();
+}
+
+// Warnsdorff's Algorithm with highlighted possible moves
+function solveWarnsdorffAuto(x, y) {
+    if (isAutoPlaying) {
+        return; // Avoid overlapping execution
+    }
+    isAutoPlaying = true;
+
+    board[x][y] = 1;
+    path.push([x, y]);
+    calculatePossibleMoves(x, y); // Highlight possible moves
+    drawBoard();
+
+    function nextMove(moveCount) {
+        if (moveCount > rows * cols) {
+            displayError("Congratulations! The Knight's Tour is completed using Warnsdorff's Algorithm!");
+            isAutoPlaying = false;
+            return;
+        }
+
+        const next = findBestMove(x, y);
+        if (!next) {
+            displayError("No solution exists using Warnsdorff's Algorithm from this starting point.");
+            isAutoPlaying = false;
+            return;
+        }
+
+        [x, y] = next;
+        board[x][y] = moveCount;
+        path.push([x, y]);
+        calculatePossibleMoves(x, y); // Highlight possible moves
+        drawBoard();
+
+        setTimeout(() => nextMove(moveCount + 1), 500); // Auto-move every 500ms
+    }
+
+    nextMove(2);
+}
+
+// Updated Button Event Handlers
+backtrackingBtn.addEventListener('click', () => {
+    if (startX === -1 || startY === -1) {
+        displayError("Please make one initial move by clicking on the board.");
+        return;
+    }
+    solveBacktrackingAuto(startX, startY, 1);
+});
+
+warnsdorffBtn.addEventListener('click', () => {
+    if (startX === -1 || startY === -1) {
+        displayError("Please make one initial move by clicking on the board.");
+        return;
+    }
+    solveWarnsdorffAuto(startX, startY);
+});
+
+// Helper Functions (Warnsdorff)
+function findBestMove(x, y) {
+    let minDegree = Infinity;
+    let bestMove = null;
+
+    for (let i = 0; i < 8; i++) {
+        const nx = x + moveX[i];
+        const ny = y + moveY[i];
+
+        if (isWithinBounds(nx, ny) && board[nx][ny] === 0) {
+            const degree = countMoves(nx, ny);
+            if (degree < minDegree) {
+                minDegree = degree;
+                bestMove = [nx, ny];
+            }
+        }
+    }
+
+    return bestMove;
+}
+
+function countMoves(x, y) {
+    let count = 0;
+    for (let i = 0; i < 8; i++) {
+        const nx = x + moveX[i];
+        const ny = y + moveY[i];
+        if (isWithinBounds(nx, ny) && board[nx][ny] === 0) {
+            count++;
+        }
+    }
+    return count;
+}
+
+
 
 // Event listeners
 resetBtn.addEventListener('click', initBoard);
@@ -207,20 +373,15 @@ undoBtn.addEventListener('click', undoMove);
 rowsInput.addEventListener('change', initBoard);
 colsInput.addEventListener('change', initBoard);
 
-// Get the start game button and intro screen
 const startGameBtn = document.getElementById('startGameBtn');
 const introScreen = document.getElementById('intro');
 const gameContainer = document.getElementById('game-container');
 
 // Start Game button event listener
-startGameBtn.addEventListener('click', function() {
-    // Hide the intro screen with a fade-out effect
+startGameBtn.addEventListener('click', function () {
     introScreen.classList.add('hidden');
-
-    // Show the game container with a fade-in effect
     gameContainer.classList.add('visible');
 });
-
 
 // Initialize the board
 initBoard();
