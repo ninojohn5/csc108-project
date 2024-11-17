@@ -42,22 +42,26 @@ canvas {
     cursor: pointer;
 }
 
-/* Button styles */
+/* General button styles */
 button {
-    padding: 10px 20px;
+    padding: 15px 30px;
     margin: 10px;
     cursor: pointer;
-    font-size: 16px;
-    background-color: #4CAF50;
+    font-size: 20px;
     color: white;
+    background-color: #4CAF50;
     border: none;
-    border-radius: 5px;
+    border-radius: 10px;
     transition: background-color 0.3s;
+    width: 200px; /* Set a fixed width for both buttons */
+    text-align: center; /* Center the text inside the button */
 }
 
+/* Hover effect for all buttons */
 button:hover {
     background-color: #45a049;
 }
+
 
 button:disabled {
     background-color: #ccc;
