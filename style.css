@@ -13,7 +13,7 @@ body {
 /* Game container styles */
 #game-container {
     width: 600px; /* Fixed width */
-    height: 650px; /* Fixed height */
+    height: 700px; /* Fixed height */
     padding: 20px;
     background-color: #fff;
     border-radius: 10px;
@@ -35,8 +35,8 @@ body {
 
 /* Canvas styles */
 canvas {
-    width: 100%; /* Ensure the canvas fits the container width */
-    height: auto; /* Maintain aspect ratio */
+    width: 100%; 
+    height: auto;
     border: 2px solid rgb(0, 0, 0);
     margin: 20px 0;
     cursor: pointer;
@@ -47,14 +47,14 @@ button {
     padding: 15px 30px;
     margin: 10px;
     cursor: pointer;
-    font-size: 20px;
+    font-size: 18px;
     color: white;
     background-color: #4CAF50;
     border: none;
     border-radius: 10px;
     transition: background-color 0.3s;
-    width: 200px; /* Set a fixed width for both buttons */
-    text-align: center; /* Center the text inside the button */
+    width: 200px;
+    text-align: center; 
 }
 
 /* Hover effect for all buttons */

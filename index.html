@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Knight's Tour Game with Backtracking</title>
+    <title>Knight's Tour Game</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -22,7 +22,7 @@
         </div>
        
         <button id="startGameBtn">Start Game</button>
-        <button id="startGameBtn">Auto-Play</button>
+        <button id="startAutoPlayBtn">Auto-Play</button>
 
     </div>
 
@@ -33,9 +33,9 @@
         <!-- Board size input -->
         <div class="board-size-input">
             <label for="rowsInput">Enter Board Size:</label>
-            <input type="number" id="rowsInput" min="3" max="15" value="8">
+            <input type="number" id="rowsInput" min="3" max="1000" value="8">
             <span>x</span>
-            <input type="number" id="colsInput" min="3" max="15" value="8">
+            <input type="number" id="colsInput" min="3" max="1000" value="8">
         </div>
 
         <!-- Chessboard and overlay container -->
@@ -44,9 +44,15 @@
             <div id="errorMessage"></div>
         </div>
 
+        <!-- Controls -->
         <div class="controls">
             <button id="resetBtn">Reset Game</button>
             <button id="undoBtn">Undo Move</button>
+        </div>
+
+        <!-- Auto-Play Button -->
+        <div class="auto-play-container">
+            <button id="startAutoPlayBtn">Auto-Play?</button>
         </div>
 
     </div>
