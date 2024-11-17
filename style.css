@@ -7,13 +7,13 @@ body {
     height: 100vh;
     margin: 0;
     background-color: #f0f0f0;
-    overflow: hidden; /* Prevent scrollbars caused by resizing */
+    overflow: hidden; 
 }
 
 /* Game container styles */
 #game-container {
-    width: 600px; /* Fixed width */
-    height: 700px; /* Fixed height */
+    width: 600px; 
+    height: 700px; 
     padding: 20px;
     background-color: #fff;
     border-radius: 10px;
@@ -24,22 +24,23 @@ body {
     justify-content: flex-start;
     position: relative;
     opacity: 0;
-    pointer-events: none; /* Disable interaction initially */
-    transition: opacity 2.5s ease-in-out; /* Smooth fade-in */
+    pointer-events: none; 
+    transition: opacity 2.5s ease-in-out; 
 }
 
 #game-container.visible {
     opacity: 1;
-    pointer-events: auto; /* Enable interaction when visible */
+    pointer-events: auto; 
 }
 
 /* Canvas styles */
 canvas {
-    width: 100%; 
-    height: auto;
-    border: 2px solid rgb(0, 0, 0);
-    margin: 20px 0;
+    display: block;
+    margin: 20px auto; 
     cursor: pointer;
+    border: 2px solid #000;
+    max-width: 100%;
+    height: auto; 
 }
 
 /* General button styles */
