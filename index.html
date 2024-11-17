@@ -7,23 +7,49 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <!-- Loading Screen -->
+    <div id="loadingScreen">
+        <img src="https://i.postimg.cc/zvRyNn34/black-knight-chess-piece-3d-design-free-png.webp" alt="Loading Knight" id="loadingKnight">
+        <p>Loading...</p>
+    </div>
+
+    <!-- Game Intro -->
+    <div id="intro">
+        <div id="knightAnimation">
+            <h1>Knight's Tour Game</h1>
+            <p>Embark on a journey with the knight!</p>
+            <img src="https://i.postimg.cc/zvRyNn34/black-knight-chess-piece-3d-design-free-png.webp" alt="Knight" id="animatedKnight">
+        </div>
+        <button id="startGameBtn">Start Game</button>
+    </div>
+
+    <!-- Game Container (Initially hidden) -->
     <div id="game-container">
         <h1>Knight's Tour Game</h1>
         
         <!-- Board size input -->
-        <label for="boardSize">Enter Board Size (e.g., 8 for 8x8):</label>
-        <input type="number" id="boardSizeInput" min="3" max="15" value="8">
-        
-        <canvas id="boardCanvas"></canvas>
-        
+        <div class="board-size-input">
+            <label for="rowsInput">Enter Board Size:</label>
+            <input type="number" id="rowsInput" min="3" max="15" value="8">
+            <span>x</span>
+            <input type="number" id="colsInput" min="3" max="15" value="8">
+        </div>
+
+        <!-- Chessboard and overlay container -->
+        <div id="board-wrapper" style="position: relative;">
+            <canvas id="boardCanvas"></canvas>
+            <div id="errorMessage"></div>
+        </div>
+
         <div class="controls">
             <button id="resetBtn">Reset Game</button>
             <button id="undoBtn">Undo Move</button>
         </div>
-        
-        <p id="status">Move Count: <span id="moveCount">0</span></p>
-        <div id="timer">Time: <span id="timerDisplay">00:00</span></div>
+
     </div>
-    <script src="game.js"></script>
+
+    <div id="errorMessage" style="display: none;"></div>
+
+    <script src="manual.js"></script>
 </body>
 </html>
