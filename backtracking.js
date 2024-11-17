@@ -1,39 +1,45 @@
-// Backtracking function to solve Knight's Tour
-export function solveKnightTour(boardSize, startX, startY) {
-    const moves = [
-        [2, 1], [1, 2], [-1, 2], [-2, 1],
-        [-2, -1], [-1, -2], [1, -2], [2, -1],
-    ];
-    const board = Array.from({ length: boardSize }, () => Array(boardSize).fill(-1));
-    board[startX][startY] = 0;
+// Define the backtracking algorithm logic here
+function solveBacktracking(board, startX, startY) {
+    const moveX = [2, 1, -1, -2, -2, -1, 1, 2];
+    const moveY = [1, 2, 2, 1, -1, -2, -2, -1];
+    
+    const rows = board.length;
+    const cols = board[0].length;
+    let path = [[startX, startY]];
 
-    function isValidMove(x, y) {
-        return x >= 0 && y >= 0 && x < boardSize && y < boardSize && board[x][y] === -1;
-    }
-
-    function backtrack(x, y, moveCount) {
-        if (moveCount === boardSize * boardSize) {
-            return true; // Solution found
-        }
-
-        for (const [dx, dy] of moves) {
-            const nextX = x + dx;
-            const nextY = y + dy;
-            if (isValidMove(nextX, nextY)) {
-                board[nextX][nextY] = moveCount;
-                if (backtrack(nextX, nextY, moveCount + 1)) {
-                    return true;
-                }
-                board[nextX][nextY] = -1; // Backtrack
-            }
-        }
-
-        return false; // No solution for this path
-    }
-
-    if (backtrack(startX, startY, 1)) {
-        return board;
+    board[startX][startY] = 1; // Start position
+    if (backtrack(board, startX, startY, 2, path, moveX, moveY)) {
+        return path; // Return the solved path
     } else {
-        return null; // No solution exists
+        return null; // No solution found
     }
+}
+
+function backtrack(board, x, y, moveCount, path, moveX, moveY) {
+    if (moveCount === board.length * board[0].length) {
+        return true; // All squares visited
+    }
+
+    for (let i = 0; i < 8; i++) {
+        const nx = x + moveX[i];
+        const ny = y + moveY[i];
+        if (isWithinBounds(nx, ny, board) && board[nx][ny] === 0) {
+            board[nx][ny] = moveCount;
+            path.push([nx, ny]);
+
+            if (backtrack(board, nx, ny, moveCount + 1, path, moveX, moveY)) {
+                return true; // Found the solution
+            }
+
+            // Undo the move if it doesn't work out
+            board[nx][ny] = 0;
+            path.pop();
+        }
+    }
+
+    return false; // No solution found
+}
+
+function isWithinBounds(x, y, board) {
+    return x >= 0 && x < board.length && y >= 0 && y < board[0].length;
 }
