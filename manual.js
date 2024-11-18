@@ -19,7 +19,6 @@ const errorMessageElement = document.getElementById('errorMessage');
 // Auto-Play Button and Dialog
 const autoPlayDialog = document.getElementById('autoPlayDialog');
 const startAutoPlayBtn = document.getElementById('startAutoPlayBtn');
-const backtrackingBtn = document.getElementById('backtrackingBtn');
 const warnsdorffBtn = document.getElementById('warnsdorffBtn');
 
 window.onload = function () {
@@ -103,13 +102,14 @@ function calculatePossibleMoves(x, y) {
         }
     }
 
-    // Game over condition: No possible moves left, and not all squares visited
-    if (possibleMoves.length === 0 && path.length !== rows * cols) {
+    // Only display the "Game over!" message if auto-play is NOT active
+    if (possibleMoves.length === 0 && path.length !== rows * cols && !isAutoPlaying) {
         displayError(
             `Game over! You visited ${path.length} squares out of ${rows * cols} possible on a ${rows}x${cols} board.\n\nPress "Reset Game" or "Undo your last move" to continue.`
         );
     }
 }
+
 
 // Check if a position is within bounds
 function isWithinBounds(x, y) {
@@ -174,6 +174,7 @@ function undoMove() {
     }
 }
 
+
 function displayError(message) {
     errorMessageElement.innerText = message;
     errorMessageElement.style.display = 'block';
@@ -181,7 +182,18 @@ function displayError(message) {
         errorMessageElement.style.opacity = 1;
     }, 10);
     errorMessageElement.style.pointerEvents = 'auto';
+
+    // Set the color based on the message
+    if (message.includes("Congratulations!")) {
+        errorMessageElement.style.backgroundColor = 'green'; 
+    } else if (message.includes("Game over!") || message.includes("No solution exists")) {
+        errorMessageElement.style.backgroundColor = 'red'; 
+    } else if (message.includes("Please make one initial move")) {
+        errorMessageElement.style.backgroundColor = 'black';
+        errorMessageElement.style.color = 'white'; 
+    } 
 }
+
 
 errorMessageElement.addEventListener('click', function () {
     clearError();
@@ -197,97 +209,47 @@ function clearError() {
 
 // Auto-Play Button Logic
 startAutoPlayBtn.addEventListener('click', () => {
-    autoPlayDialog.classList.remove('hidden');
-});
-
-backtrackingBtn.addEventListener('click', () => {
-    autoPlayDialog.classList.add('hidden');
-    console.log("Backtracking Algorithm Selected");
     if (startX === -1 || startY === -1) {
-        displayError("Please select a starting position before running the algorithm.");
+        displayError("Please make one initial move by clicking on the board.");
         return;
     }
-    solveBacktracking(startX, startY);
-});
-
-warnsdorffBtn.addEventListener('click', () => {
-    autoPlayDialog.classList.add('hidden');
-    console.log("Warnsdorff's Algorithm Selected");
-    if (startX === -1 || startY === -1) {
-        displayError("Please select a starting position before running the algorithm.");
-        return;
-    }
-    solveWarnsdorff(startX, startY);
+    // Call the solveWarnsdorffAuto function here
+    solveWarnsdorffAuto(startX, startY);
 });
 
 // Flag for active auto-play
 let isAutoPlaying = false;
 
-// Backtracking Algorithm with highlighted possible moves
-function solveBacktrackingAuto(x, y, moveCount = 1) {
-    if (isAutoPlaying) {
-        return; // Avoid overlapping execution
+// Auto-Play Button Logic
+startAutoPlayBtn.addEventListener('click', () => {
+    if (startX === -1 || startY === -1) {
+        displayError("Please make one initial move by clicking on the board.");
+        return;
     }
-    isAutoPlaying = true;
+    // Call the solveWarnsdorffAuto function here
+    solveWarnsdorffAuto(startX, startY);
+});
 
-    function nextMove() {
-        if (moveCount > rows * cols) {
-            displayError("Congratulations! The Knight's Tour is completed using Backtracking!");
-            isAutoPlaying = false;
-            return;
-        }
 
-        board[x][y] = moveCount;
-        path.push([x, y]);
-        calculatePossibleMoves(x, y); // Highlight possible moves
-        drawBoard();
+// Flag for active auto-play
+let autoPlayTimer; // Variable to store the timer ID
 
-        if (moveCount === rows * cols) {
-            displayError("Congratulations! The Knight's Tour is completed using Backtracking!");
-            isAutoPlaying = false;
-            return;
-        }
-
-        for (let i = 0; i < 8; i++) {
-            const nextX = x + moveX[i];
-            const nextY = y + moveY[i];
-
-            if (isWithinBounds(nextX, nextY) && board[nextX][nextY] === 0) {
-                setTimeout(() => {
-                    moveCount++;
-                    x = nextX;
-                    y = nextY;
-                    nextMove();
-                }, 500); // Auto-move every 500ms
-                return;
-            }
-        }
-
-        // Backtrack if no moves are available
-        board[x][y] = 0;
-        path.pop();
-        moveCount--;
-        const [prevX, prevY] = path[path.length - 1];
-        x = prevX;
-        y = prevY;
-
-        setTimeout(nextMove, 500); // Continue backtracking automatically
-    }
-
-    nextMove();
-}
-
-// Warnsdorff's Algorithm with highlighted possible moves
+// Warnsdorff's Algorithm 
 function solveWarnsdorffAuto(x, y) {
     if (isAutoPlaying) {
         return; // Avoid overlapping execution
     }
     isAutoPlaying = true;
 
-    board[x][y] = 1;
-    path.push([x, y]);
-    calculatePossibleMoves(x, y); // Highlight possible moves
-    drawBoard();
+    // Check if the board is already solved
+    if (path.length === rows * cols) {
+        displayError("Congratulations! The Knight's Tour is already completed.");
+        isAutoPlaying = false;
+        return;
+    }
+
+    // Start from the current position in the path
+    const currentMoveCount = path.length;
 
     function nextMove(moveCount) {
         if (moveCount > rows * cols) {
@@ -298,32 +260,28 @@ function solveWarnsdorffAuto(x, y) {
 
         const next = findBestMove(x, y);
         if (!next) {
-            displayError("No solution exists using Warnsdorff's Algorithm from this starting point.");
+            // No solution found, display merged message
+            displayError(`No solution exists using Warnsdorff's Algorithm from this starting point. You visited ${moveCount - 1} squares out of ${rows * cols} possible on a ${rows}x${cols} board.`);
             isAutoPlaying = false;
             return;
         }
 
         [x, y] = next;
+        // Set the board value to the correct move count, considering the existing moves
         board[x][y] = moveCount;
         path.push([x, y]);
         calculatePossibleMoves(x, y); // Highlight possible moves
         drawBoard();
 
-        setTimeout(() => nextMove(moveCount + 1), 500); // Auto-move every 500ms
+        // Schedule the next move, store the timer ID
+        autoPlayTimer = setTimeout(() => nextMove(moveCount + 1), 500); // Auto-move every 500ms
     }
 
-    nextMove(2);
+    nextMove(currentMoveCount + 1); // Start from the next move
 }
 
-// Updated Button Event Handlers
-backtrackingBtn.addEventListener('click', () => {
-    if (startX === -1 || startY === -1) {
-        displayError("Please make one initial move by clicking on the board.");
-        return;
-    }
-    solveBacktrackingAuto(startX, startY, 1);
-});
 
+// Updated Button Event Handlers
 warnsdorffBtn.addEventListener('click', () => {
     if (startX === -1 || startY === -1) {
         displayError("Please make one initial move by clicking on the board.");
@@ -381,6 +339,14 @@ const gameContainer = document.getElementById('game-container');
 startGameBtn.addEventListener('click', function () {
     introScreen.classList.add('hidden');
     gameContainer.classList.add('visible');
+});
+
+resetBtn.addEventListener('click', () => {
+    // Stop auto-play if it's active
+    isAutoPlaying = false; 
+    // Clear the auto-play timer
+    clearTimeout(autoPlayTimer); 
+    initBoard(); 
 });
 
 // Initialize the board
