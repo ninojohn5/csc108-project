@@ -234,6 +234,72 @@ startAutoPlayBtn.addEventListener('click', () => {
 // Flag for active auto-play
 let autoPlayTimer; // Variable to store the timer ID
 
+function displayCelebration() {
+    // Create the congratulatory message element
+    const congratsMessage = document.createElement("div");
+    congratsMessage.style.position = "fixed";
+    congratsMessage.style.top = "50%";
+    congratsMessage.style.left = "50%";
+    congratsMessage.style.transform = "translate(-50%, -50%)";
+    congratsMessage.style.fontSize = "24px";
+    congratsMessage.style.fontWeight = "bold";
+    congratsMessage.style.color = "#4CAF50";
+    congratsMessage.style.textAlign = "center";
+    congratsMessage.style.opacity = 0;
+    congratsMessage.style.transition = "opacity 2s ease-out, transform 1s ease-out";
+    document.body.appendChild(congratsMessage);
+
+    // Smooth fade-in and slightly scale up the message
+    setTimeout(() => {
+        congratsMessage.style.opacity = 1;
+        congratsMessage.style.transform = "translate(-50%, -50%) scale(1.1)";
+    }, 100);
+
+    // Add more confetti pieces for a fuller effect (200 pieces)
+    for (let i = 0; i < 200; i++) { // Increase number of confetti pieces
+        const confetti = document.createElement("div");
+        confetti.style.position = "absolute";
+        confetti.style.width = "10px";
+        confetti.style.height = "10px";
+        confetti.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 60%)`;
+        confetti.style.borderRadius = "50%";
+        
+        // Set a random animation duration and delay for each piece
+        const duration = Math.random() * 2 + 2; // Duration between 2s and 4s
+        const delay = Math.random() * 1; // Random delay between 0s and 1s
+        
+        confetti.style.animation = `confetti ${duration}s ease-in-out ${delay}s forwards`;
+        confetti.style.left = `${Math.random() * 100}%`;
+        confetti.style.top = `-10%`;  // Start the confetti off-screen at the top
+        document.body.appendChild(confetti);
+        
+        // Remove confetti after animation ends
+        setTimeout(() => {
+            confetti.remove();
+        }, duration * 1000);
+    }
+
+    // Add CSS keyframes for the confetti animation dynamically
+    const styleSheet = document.createElement("style");
+    styleSheet.type = "text/css";
+    styleSheet.innerText = `
+        @keyframes confetti {
+            0% {
+                transform: translateY(0) rotate(0);
+                opacity: 1; /* Fully visible at the start */
+            }
+            80% {
+                opacity: 1; /* Confetti stays visible until near the end */
+            }
+            100% {
+                transform: translateY(120vh) rotate(${Math.random() * 360}deg); /* Fall beyond 100vh (off-screen) */
+                opacity: 0; /* Fade out before reaching the bottom */
+            }
+        }
+    `;
+    document.head.appendChild(styleSheet);
+}
+
 // Warnsdorff's Algorithm 
 function solveWarnsdorffAuto(x, y) {
     if (isAutoPlaying) {
@@ -243,6 +309,7 @@ function solveWarnsdorffAuto(x, y) {
 
     // Check if the board is already solved
     if (path.length === rows * cols) {
+        displayCelebration();  // Trigger the celebration animation
         displayError("Congratulations! The Knight's Tour is already completed.");
         isAutoPlaying = false;
         return;
@@ -253,6 +320,7 @@ function solveWarnsdorffAuto(x, y) {
 
     function nextMove(moveCount) {
         if (moveCount > rows * cols) {
+            displayCelebration();  // Trigger the celebration animation
             displayError("Congratulations! The Knight's Tour is completed using Warnsdorff's Algorithm!");
             isAutoPlaying = false;
             return;
