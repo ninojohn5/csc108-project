@@ -6,16 +6,13 @@ body {
     align-items: center;
     height: 100vh;
     margin: 0;
-    background-color: #f0f0f0;
-    background-image: url('img/background.jpg'); /* Replace with your image path */
+    background-image: url('https://i.ibb.co/nPMSCBC/knight-1.jpg'); /* Replace with your image path */
     background-size: cover; /* Ensures the image covers the entire page */
     background-position: center center; /* Centers the image */
     background-repeat: no-repeat; /* Prevents the image from repeating */
     overflow: hidden; 
-
 }
 
-/* Game container styles */
 /* Game container styles */
 #game-container {
     width: 600px; 
@@ -253,4 +250,32 @@ p {
 
 #autoPlayDialog.hidden {
     display: none;
+}
+
+/*for the autoplay choices prompt */
+#algorithmChoice {
+  display: none; /* Initially hidden */
+  position: fixed; /* Fixed position relative to the screen */
+  top: 50%; /* Position 50% from the top of the viewport */
+  left: 50%; /* Position 50% from the left of the viewport */
+  transform: translate(-50%, -50%); /* Adjust to truly center the element */
+  background-color: white; /* Background color for the prompt */
+  padding: 20px; /* Padding around the content */
+  border-radius: 8px; /* Optional rounded corners */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Optional shadow for better visibility */
+  text-align: center; /* Center the text inside */
+}
+
+#algorithmChoice button {
+  margin-top: 10px; /* Space between buttons */
+  padding: 10px 20px; /* Button padding */
+  background-color: #4CAF50; /* Button color */
+  color: white; /* Text color */
+  border: none; /* Remove default border */
+  border-radius: 5px; /* Rounded corners */
+  cursor: pointer; /* Change cursor to indicate it's clickable */
+}
+
+#algorithmChoice button:hover {
+  background-color: #45a049; /* Darker green on hover */
 }
