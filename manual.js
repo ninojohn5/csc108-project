@@ -231,6 +231,7 @@ startAutoPlayBtn.addEventListener('click', () => {
 });
 
 //bayot si john
+//nino gwapo
 
 // Flag for active auto-play
 let autoPlayTimer; // Variable to store the timer ID
