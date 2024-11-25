@@ -9,7 +9,7 @@
 <body>
     <!-- Loading Screen -->
     <div id="loadingScreen">
-        <img src="img/knight.webp" alt="Loading Knight" id="loadingKnight">
+        <img src="https://i.postimg.cc/zvRyNn34/black-knight-chess-piece-3d-design-free-png.webp" alt="Loading Knight" id="loadingKnight">
         <p>Loading...</p>
     </div>
 
@@ -18,7 +18,7 @@
         <div id="knightAnimation">
             <h1>Knight's Tour Game</h1>
             <p>Embark on a journey with the knight!</p>
-            <img src="img/knight.webp" alt="Knight" id="animatedKnight">
+            <img src="https://i.postimg.cc/zvRyNn34/black-knight-chess-piece-3d-design-free-png.webp" alt="Knight" id="animatedKnight">
         </div>
         <button id="startGameBtn">Start Game</button>
     </div>
@@ -47,16 +47,27 @@
             <button id="undoBtn">Undo Move</button>
         </div>
 
+        
+      
+        
         <!-- Auto-Play Button -->
-        <div class="auto-play-container">
-            <button id="startAutoPlayBtn">Auto-Play?</button>
-        </div>
+        <button id="autoPlayBtn">Auto-Play</button>
+
+        <!-- Algorithm Choice Prompt (Initially hidden) -->
+        <div id="algorithmChoice" style="display:none;">
+            <p>Choose an algorithm:</p>
+            <button id="backtracking">Backtracking Algorithm</button>
+            <button id="warnsdorff">Warnsdorff's Algorithm</button>
+            <button id="exitAlgorithmPrompt" style="background-color: red; color: white;">Exit</button> <!-- Styled Exit Button -->
+         </div>
     </div>
 
     <!-- Auto-Play Dialog -->
     <div id="autoPlayDialog" class="hidden">
         <button id="warnsdorffBtn">Warnsdorff's Algorithm</button>
     </div>
+  
+    
 
     <script src="manual.js"></script>
 </body>
