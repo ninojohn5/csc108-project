@@ -230,6 +230,7 @@ startAutoPlayBtn.addEventListener('click', () => {
     solveWarnsdorffAuto(startX, startY);
 });
 
+//bayot si john
 
 // Flag for active auto-play
 let autoPlayTimer; // Variable to store the timer ID
