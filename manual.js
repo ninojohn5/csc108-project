@@ -323,7 +323,101 @@ function countMoves(x, y) {
     return count;
 }
 
+// Backtracking implementation
+function backtrack(x, y, moveCount) {
+    if (moveCount > rows * cols) {
+        // Solution found!
+        displayError("Congratulations! The Knight's Tour is completed using Backtracking!");
+        isAutoPlaying = false;
+        return true;
+    }
 
+    // Generate possible moves
+    const possibleMoves = generateValidMoves(x, y);
+
+    // Try each possible move
+    for (let i = 0; i < possibleMoves.length; i++) {
+        const [nx, ny] = possibleMoves[i];
+
+        // Make the move
+        board[nx][ny] = moveCount;
+        path.push([nx, ny]);
+
+        // Recursively explore the next move
+        if (backtrack(nx, ny, moveCount + 1)) {
+            return true; // Solution found
+        }
+
+        // Backtrack: undo the move
+        board[nx][ny] = 0;
+        path.pop();
+    }
+
+    // No solution found from this position
+    return false;
+}
+
+// Helper function to generate valid moves
+function generateValidMoves(x, y) {
+    const validMoves = [];
+    for (let i = 0; i < 8; i++) {
+        const nx = x + moveX[i];
+        const ny = y + moveY[i];
+        if (isWithinBounds(nx, ny) && board[nx][ny] === 0) {
+            validMoves.push([nx, ny]);
+        }
+    }
+    return validMoves;
+}
+
+// Update solveWarnsdorffAuto to include backtracking
+function solveWarnsdorffAuto(x, y) {
+    if (isAutoPlaying) {
+        return; // Avoid overlapping execution
+    }
+    isAutoPlaying = true;
+
+    // Check if the board is already solved
+    if (path.length === rows * cols) {
+        displayError("Congratulations! The Knight's Tour is already completed.");
+        isAutoPlaying = false;
+        return;
+    }
+
+    // Start from the current position in the path
+    const currentMoveCount = path.length;
+
+    function nextMove(moveCount) {
+        if (moveCount > rows * cols) {
+            displayError("Congratulations! The Knight's Tour is completed using Warnsdorff's Algorithm!");
+            isAutoPlaying = false;
+            return;
+        }
+
+        const next = findBestMove(x, y);
+        if (!next) {
+            // Warnsdorff's failed, try backtracking
+            if (backtrack(x, y, moveCount)) {
+                return; // Solution found through backtracking
+            } else {
+                // No solution found, display merged message
+                displayError(`No solution exists using Warnsdorff's Algorithm and Backtracking from this starting point. You visited ${moveCount - 1} squares out of ${rows * cols} possible on a ${rows}x${cols} board.`);
+                isAutoPlaying = false;
+                return;
+            }
+        }
+
+        [x, y] = next;
+        board[x][y] = moveCount;
+        path.push([x, y]);
+        calculatePossibleMoves(x, y); // Highlight possible moves
+        drawBoard();
+
+        autoPlayTimer = setTimeout(() => nextMove(moveCount + 1), 500);
+    }
+
+    nextMove(currentMoveCount + 1); // Start from the next move
+}
 
 // Event listeners
 resetBtn.addEventListener('click', initBoard);
