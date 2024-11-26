@@ -1,6 +1,6 @@
 let rows = 8; // Default rows
 let cols = 8; // Default columns
-const moveX = [2, 1, -1, -2, -2, -1, 1, 2]; //ooeeaaiiiiaaa
+const moveX = [2, 1, -1, -2, -2, -1, 1, 2];
 const moveY = [1, 2, 2, 1, -1, -2, -2, -1];
 let board, path, startX, startY, possibleMoves;
 
