@@ -230,8 +230,6 @@ startAutoPlayBtn.addEventListener('click', () => {
     solveWarnsdorffAuto(startX, startY);
 });
 
-//bayot si john
-//nino gwapo
 
 // Flag for active auto-play
 let autoPlayTimer; // Variable to store the timer ID
@@ -449,6 +447,7 @@ function solveWarnsdorffAuto(x, y) {
 
     // Check if the board is already solved
     if (path.length === rows * cols) {
+        displayCelebration();  // Trigger the celebration animation
         displayError("Congratulations! The Knight's Tour is already completed.");
         isAutoPlaying = false;
         return;
@@ -459,6 +458,7 @@ function solveWarnsdorffAuto(x, y) {
 
     function nextMove(moveCount) {
         if (moveCount > rows * cols) {
+            displayCelebration();  // Trigger the celebration animation
             displayError("Congratulations! The Knight's Tour is completed using Warnsdorff's Algorithm!");
             isAutoPlaying = false;
             return;
