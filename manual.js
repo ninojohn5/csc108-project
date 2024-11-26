@@ -102,7 +102,7 @@ function calculatePossibleMoves(x, y) {
         }
     }
 
-    // Only display "Game Over" if manually played and no possible moves are available
+    // Only display the "Game over!" message if auto-play is NOT active
     if (possibleMoves.length === 0 && path.length !== rows * cols && !isAutoPlaying) {
         displayError(
             `Game over! You visited ${path.length} squares out of ${rows * cols} possible on a ${rows}x${cols} board.\n\nPress "Reset Game" or "Undo your last move" to continue.`
@@ -176,10 +176,11 @@ function undoMove() {
 
 
 function displayError(message) {
-    // Display the error message
     errorMessageElement.innerText = message;
     errorMessageElement.style.display = 'block';
-    errorMessageElement.style.opacity = 1; // Ensure it's fully visible
+    setTimeout(() => {
+        errorMessageElement.style.opacity = 1;
+    }, 10);
     errorMessageElement.style.pointerEvents = 'auto';
 
     // Set the color based on the message
@@ -189,24 +190,9 @@ function displayError(message) {
         errorMessageElement.style.backgroundColor = 'red'; 
     } else if (message.includes("Please make one initial move")) {
         errorMessageElement.style.backgroundColor = 'black';
-        errorMessageElement.style.color = 'white';
-    }
-
-    // Apply fade-out only for specific messages
-    if (!message.includes("Congratulations!") && !message.includes("Game over!")) {
-        setTimeout(() => {
-            let fadeEffect = setInterval(() => {
-                if (errorMessageElement.style.opacity > 0) {
-                    errorMessageElement.style.opacity -= 0.1; // Reduce opacity gradually
-                } else {
-                    clearInterval(fadeEffect); // Stop fading when opacity reaches 0
-                    errorMessageElement.style.display = 'none'; // Hide the element
-                }
-            }, 100); // Adjust the fade speed here (100ms interval)
-        }, 2000); // Wait 2 seconds before starting the fade-out
-    }
+        errorMessageElement.style.color = 'white'; 
+    } 
 }
-
 
 
 errorMessageElement.addEventListener('click', function () {
@@ -220,19 +206,7 @@ function clearError() {
     }, 10000000);
     errorMessageElement.style.pointerEvents = 'none';
 }
-/*
-// Auto-Play Button Logic
-startAutoPlayBtn.addEventListener('click', () => {
-    if (startX === -1 || startY === -1) {
-        displayError("Please make one initial move by clicking on the board.");
-        return;
-    }
-    startWarnsdorffAlgorithm(startX, startY);
-});
-*/
-// Flag for active auto-play
-let isAutoPlaying = false;
-/*
+
 // Auto-Play Button Logic
 startAutoPlayBtn.addEventListener('click', () => {
     if (startX === -1 || startY === -1) {
@@ -242,80 +216,25 @@ startAutoPlayBtn.addEventListener('click', () => {
     // Call the solveWarnsdorffAuto function here
     solveWarnsdorffAuto(startX, startY);
 });
-*/
+
+// Flag for active auto-play
+let isAutoPlaying = false;
+
+// Auto-Play Button Logic
+startAutoPlayBtn.addEventListener('click', () => {
+    if (startX === -1 || startY === -1) {
+        displayError("Please make one initial move by clicking on the board.");
+        return;
+    }
+    // Call the solveWarnsdorffAuto function here
+    solveWarnsdorffAuto(startX, startY);
+});
+
 
 // Flag for active auto-play
 let autoPlayTimer; // Variable to store the timer ID
 
-function displayCelebration() {
-    // Create the congratulatory message element
-    const congratsMessage = document.createElement("div");
-    congratsMessage.style.position = "fixed";
-    congratsMessage.style.top = "50%";
-    congratsMessage.style.left = "50%";
-    congratsMessage.style.transform = "translate(-50%, -50%)";
-    congratsMessage.style.fontSize = "24px";
-    congratsMessage.style.fontWeight = "bold";
-    congratsMessage.style.color = "#4CAF50";
-    congratsMessage.style.textAlign = "center";
-    congratsMessage.style.opacity = 0;
-    congratsMessage.style.transition = "opacity 2s ease-out, transform 1s ease-out";
-    document.body.appendChild(congratsMessage);
-
-    // Smooth fade-in and slightly scale up the message
-    setTimeout(() => {
-        congratsMessage.style.opacity = 1;
-        congratsMessage.style.transform = "translate(-50%, -50%) scale(1.1)";
-    }, 100);
-
-    // Add more confetti pieces for a fuller effect (200 pieces)
-    for (let i = 0; i < 200; i++) { // Increase number of confetti pieces
-        const confetti = document.createElement("div");
-        confetti.style.position = "absolute";
-        confetti.style.width = "10px";
-        confetti.style.height = "10px";
-        confetti.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 60%)`;
-        confetti.style.borderRadius = "50%";
-        
-        // Set a random animation duration and delay for each piece
-        const duration = Math.random() * 2 + 2; // Duration between 2s and 4s
-        const delay = Math.random() * 1; // Random delay between 0s and 1s
-        
-        confetti.style.animation = `confetti ${duration}s ease-in-out ${delay}s forwards`;
-        confetti.style.left = `${Math.random() * 100}%`;
-        confetti.style.top = `-10%`;  // Start the confetti off-screen at the top
-        document.body.appendChild(confetti);
-        
-        // Remove confetti after animation ends
-        setTimeout(() => {
-            confetti.remove();
-        }, duration * 1000);
-    }
-
-    // Add CSS keyframes for the confetti animation dynamically
-    const styleSheet = document.createElement("style");
-    styleSheet.type = "text/css";
-    styleSheet.innerText = `
-        @keyframes confetti {
-            0% {
-                transform: translateY(0) rotate(0);
-                opacity: 1; /* Fully visible at the start */
-            }
-            80% {
-                opacity: 1; /* Confetti stays visible until near the end */
-            }
-            100% {
-                transform: translateY(120vh) rotate(${Math.random() * 360}deg); /* Fall beyond 100vh (off-screen) */
-                opacity: 0; /* Fade out before reaching the bottom */
-            }
-        }
-    `;
-    document.head.appendChild(styleSheet);
-}
-
-
-
-// Warnsdorff's Algorithm with Backtracking 
+// Warnsdorff's Algorithm 
 function solveWarnsdorffAuto(x, y) {
     if (isAutoPlaying) {
         return; // Avoid overlapping execution
@@ -324,7 +243,6 @@ function solveWarnsdorffAuto(x, y) {
 
     // Check if the board is already solved
     if (path.length === rows * cols) {
-        displayCelebration();  // Trigger the celebration animation
         displayError("Congratulations! The Knight's Tour is already completed.");
         isAutoPlaying = false;
         return;
@@ -333,42 +251,33 @@ function solveWarnsdorffAuto(x, y) {
     // Start from the current position in the path
     const currentMoveCount = path.length;
 
-    // Backtracking function with Warnsdorff's heuristic
-    function nextMove(moveCount, x, y, path) {
+    function nextMove(moveCount) {
         if (moveCount > rows * cols) {
-            displayCelebration();  // Trigger the celebration animation
-            displayError("Congratulations! The Knight's Tour is completed using Warnsdorff's Algorithm with Backtracking!");
+            displayError("Congratulations! The Knight's Tour is completed using Warnsdorff's Algorithm!");
             isAutoPlaying = false;
-            return true;
+            return;
         }
 
-        // Find the best possible next move based on Warnsdorff's heuristic
         const next = findBestMove(x, y);
         if (!next) {
-            // No solution found, backtrack
-            return false;
+            // No solution found, display merged message
+            displayError(`No solution exists using Warnsdorff's Algorithm from this starting point. You visited ${moveCount - 1} squares out of ${rows * cols} possible on a ${rows}x${cols} board.`);
+            isAutoPlaying = false;
+            return;
         }
 
-        const [nextX, nextY] = next;
-        path.push([nextX, nextY]);
-        board[nextX][nextY] = moveCount;
-        calculatePossibleMoves(nextX, nextY); // Highlight possible moves
+        [x, y] = next;
+        // Set the board value to the correct move count, considering the existing moves
+        board[x][y] = moveCount;
+        path.push([x, y]);
+        calculatePossibleMoves(x, y); // Highlight possible moves
         drawBoard();
 
         // Schedule the next move, store the timer ID
-        autoPlayTimer = setTimeout(() => {
-            if (!nextMove(moveCount + 1, nextX, nextY, path)) {
-                // If next move didn't work, backtrack by removing the last move
-                path.pop();
-                board[nextX][nextY] = -1;
-            }
-        }, 200); // Auto-move every 500ms
-
-        return true;
+        autoPlayTimer = setTimeout(() => nextMove(moveCount + 1), 500); // Auto-move every 500ms
     }
 
-    // Start from the next move, using backtracking
-    nextMove(currentMoveCount + 1, x, y, path);
+    nextMove(currentMoveCount + 1); // Start from the next move
 }
 
 
@@ -439,58 +348,6 @@ resetBtn.addEventListener('click', () => {
     clearTimeout(autoPlayTimer); 
     initBoard(); 
 });
-
-// Event listener for the Auto-Play Button
-document.getElementById("autoPlayBtn").addEventListener("click", function() {
-  // Show the algorithm choice
-  document.getElementById("algorithmChoice").style.display = "block";
-});
-
-// Event listener for the Exit button
-document.getElementById("exitAlgorithmPrompt").addEventListener("click", function () {
-    // Hide the algorithm choice prompt
-    document.getElementById("algorithmChoice").style.display = "none";
-});
-
-
-// Event listener for the Backtracking choice---------------------------------------------------------For backtracking. No algorithm yet.
-document.getElementById("backtracking").addEventListener("click", function() {
-  // Hide the algorithm choice prompt
-  document.getElementById("algorithmChoice").style.display = "none";
-  
-  // Call your backtracking algorithm to solve the knight's tour
-  startBacktrackingAlgorithm(); // Backtracking logic to be added later
-});
-
-// Event listener for Warnsdorff's Algorithm choice
-document.getElementById("warnsdorff").addEventListener("click", function () {
-    // Hide the algorithm choice prompt
-    document.getElementById("algorithmChoice").style.display = "none";
-
-    // Use the current starting position if available, or set a default
-    if (startX === -1 || startY === -1) {
-        startX = 0; // Default to the top-left corner
-        startY = 0;
-        board[startX][startY] = 1; // Mark the first move on the board
-        path.push([startX, startY]); // Add the move to the path
-    }
-
-    // Call Warnsdorff's Algorithm with the starting position
-    startWarnsdorffAlgorithm(startX, startY);
-});
-
-// Function to start Backtracking algorithm (currently empty)--------------------------------For backtracking. No algorithm yet.
-function startBacktrackingAlgorithm() {
-  console.log("Starting Backtracking Algorithm...");
-  // Add logic for Backtracking algorithm here
-}
-
-// Function to start Warnsdorff's Algorithm
-function startWarnsdorffAlgorithm(x, y) {
-    console.log("Starting Warnsdorff's Algorithm...");
-    solveWarnsdorffAuto(x, y);
-}
-
 
 // Initialize the board
 initBoard();
