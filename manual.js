@@ -253,10 +253,9 @@ function solveWarnsdorffAuto(x, y) {
 
     function nextMove(moveCount, x, y, path) {
         if (moveCount > rows * cols) {
-            displayCelebration();  // Trigger the celebration animation
-            displayError("Congratulations! The Knight's Tour is completed using Warnsdorff's Algorithm with Backtracking!");
+            displayError("Congratulations! The Knight's Tour is completed using Warnsdorff's mixed with backtrack Algorithm!");
             isAutoPlaying = false;
-            return true;
+            return;
         }
 
         // Find the best possible next move based on Warnsdorff's heuristic
