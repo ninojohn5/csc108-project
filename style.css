@@ -6,7 +6,7 @@ body {
     align-items: center;
     height: 100vh;
     margin: 0;
-    background-image: url('https://i.ibb.co/nPMSCBC/knight-1.jpg'); /* Replace with your image path */
+    background-image: url('img/background.jpg'); /* Replace with your image path */
     background-size: cover; /* Ensures the image covers the entire page */
     background-position: center center; /* Centers the image */
     background-repeat: no-repeat; /* Prevents the image from repeating */
