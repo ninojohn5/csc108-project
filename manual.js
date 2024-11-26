@@ -251,35 +251,42 @@ function solveWarnsdorffAuto(x, y) {
     // Start from the current position in the path
     const currentMoveCount = path.length;
 
-    function nextMove(moveCount) {
+    function nextMove(moveCount, x, y, path) {
         if (moveCount > rows * cols) {
-            displayError("Congratulations! The Knight's Tour is completed using Warnsdorff's Algorithm!");
+            displayCelebration();  // Trigger the celebration animation
+            displayError("Congratulations! The Knight's Tour is completed using Warnsdorff's Algorithm with Backtracking!");
             isAutoPlaying = false;
-            return;
+            return true;
         }
 
+        // Find the best possible next move based on Warnsdorff's heuristic
         const next = findBestMove(x, y);
         if (!next) {
-            // No solution found, display merged message
-            displayError(`No solution exists using Warnsdorff's Algorithm from this starting point. You visited ${moveCount - 1} squares out of ${rows * cols} possible on a ${rows}x${cols} board.`);
-            isAutoPlaying = false;
-            return;
+            displayError(`No solution exists using Warnsdorff's mixed with backtrack Algorithm from this starting point. You visited ${moveCount - 1} squares out of ${rows * cols} possible on a ${rows}x${cols} board.`);
+            return false;
         }
 
-        [x, y] = next;
-        // Set the board value to the correct move count, considering the existing moves
-        board[x][y] = moveCount;
-        path.push([x, y]);
-        calculatePossibleMoves(x, y); // Highlight possible moves
+        const [nextX, nextY] = next;
+        path.push([nextX, nextY]);
+        board[nextX][nextY] = moveCount;
+        calculatePossibleMoves(nextX, nextY); // Highlight possible moves
         drawBoard();
 
         // Schedule the next move, store the timer ID
-        autoPlayTimer = setTimeout(() => nextMove(moveCount + 1), 500); // Auto-move every 500ms
+        autoPlayTimer = setTimeout(() => {
+            if (!nextMove(moveCount + 1, nextX, nextY, path)) {
+                // If next move didn't work, backtrack by removing the last move
+                path.pop();
+                board[nextX][nextY] = -1;
+            }
+        }, 200); // Auto-move every 500ms
+
+        return true;
     }
 
-    nextMove(currentMoveCount + 1); // Start from the next move
+    // Start from the next move, using backtracking
+    nextMove(currentMoveCount + 1, x, y, path);
 }
-
 
 // Updated Button Event Handlers
 warnsdorffBtn.addEventListener('click', () => {
