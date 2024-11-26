@@ -5,19 +5,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Knight's Tour Game</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="img/knight.webp" type="image/x-icon">
 </head>
 <body>
     <!-- Loading Screen -->
     <div id="loadingScreen">
-        <img src="img/knight.webp" alt="Loading Knight" id="loadingKnight">
-        <p>Loading...</p>
+        <!--To mirror the image-->
+        <div id="loading_image">
+            <img src="img/knight.webp" alt="Loading Knight" id="loadingKnight">
+        </div>
+
+        <!-- Progress Bar Section -->
+        <div id="loading_Knight">
+            <div class="progress-bar"></div>
+        </div>
+
+        <!-- Loading Text -->
+        <p id="loadingText">Loading...</p>
     </div>
 
     <!-- Game Intro -->
     <div id="intro">
         <div id="knightAnimation">
             <h1>Knight's Tour Game</h1>
-            <p>Embark on a journey with the knight!</p>
+            <p id="slantedText">Embark on a journey with the knight!</p>
             <img src="img/knight.webp" alt="Knight" id="animatedKnight">
         </div>
         <button id="startGameBtn">Start Game</button>
@@ -30,9 +41,9 @@
         <!-- Board size input -->
         <div class="board-size-input">
             <label for="rowsInput">Enter Board Size:</label>
-            <input type="number" id="rowsInput" min="3" max="1000" value="8">
+            <input type="number" id="rowsInput" min="3" max="20" value="8">
             <span>x</span>
-            <input type="number" id="colsInput" min="3" max="1000" value="8">
+            <input type="number" id="colsInput" min="3" max="20" value="8">
         </div>
 
         <!-- Chessboard and overlay container -->
@@ -49,8 +60,12 @@
 
         <!-- Auto-Play Button -->
         <div class="auto-play-container">
-            <button id="startAutoPlayBtn">Auto-Play?</button>
+            <button id="startAutoPlayBtn">Auto-Play</button>
+            <button id="pauseResumeBtn">Pause Auto-Play</button>
         </div>
+
+        <button id="MainMenuBtn">Main Menu</button>
+        
     </div>
 
     <!-- Auto-Play Dialog -->

@@ -21,6 +21,10 @@ const autoPlayDialog = document.getElementById('autoPlayDialog');
 const startAutoPlayBtn = document.getElementById('startAutoPlayBtn');
 const warnsdorffBtn = document.getElementById('warnsdorffBtn');
 
+let isPaused = false; // Flag to track if the game is paused
+let moveCount = 0; // To track the number of moves during auto-play
+
+
 window.onload = function () {
     // Simulating the game initialization completion
     setTimeout(() => {
@@ -37,6 +41,10 @@ function initBoard() {
 
     if (isNaN(inputRows) || isNaN(inputCols) || inputRows < 3 || inputCols < 3) {
         displayError("Please enter valid positive numbers for rows and columns (min: 3).");
+        rowsInput.value = colsInput.value = 8; // Reset to default
+        rows = cols = 8;
+    } else if (isNaN(inputRows) || isNaN(inputCols) || inputRows > 20 || inputCols > 20) {
+        displayError("Please enter valid positive numbers for rows and columns (max: 20).");
         rowsInput.value = colsInput.value = 8; // Reset to default
         rows = cols = 8;
     } else {
@@ -140,7 +148,8 @@ canvas.addEventListener('click', function (event) {
             drawBoard();
 
             if (path.length === rows * cols) {
-                displayError("Congratulations! You've completed the Knight's Tour!");
+                displayCelebration();  // Trigger the celebration animation
+                displayError(`Congratulations! You've completed the Knight's Tour!\n\n Do you want to play again? Please press "Reset Game" to play again or press "Main Menu" to exit. `);
             }
         }
     }
@@ -174,7 +183,7 @@ function undoMove() {
     }
 }
 
-
+//To display prompt messages
 function displayError(message) {
     errorMessageElement.innerText = message;
     errorMessageElement.style.display = 'block';
@@ -189,9 +198,37 @@ function displayError(message) {
     } else if (message.includes("Game over!") || message.includes("No solution exists")) {
         errorMessageElement.style.backgroundColor = 'red'; 
     } else if (message.includes("Please make one initial move")) {
-        errorMessageElement.style.backgroundColor = 'black';
-        errorMessageElement.style.color = 'white'; 
-    } 
+        errorMessageElement.style.backgroundColor = 'red';
+        errorMessageElement.style.color = 'white';
+        FadeOutErrorMessage(); 
+    } else if (message.includes("No moves to undo!")){
+        errorMessageElement.style.backgroundColor = 'red';
+        FadeOutErrorMessage();
+    } else if (message.includes("Auto-Play paused.")){
+        errorMessageElement.style.backgroundColor = 'red';
+    } else if (message.includes("Auto-Play resumed.")){
+        errorMessageElement.style.backgroundColor = 'green';
+        FadeOutErrorMessage();
+    } else if (message.includes("Click 'Auto-Play' first.")){
+        errorMessageElement.style.backgroundColor = 'red';
+        FadeOutErrorMessage();
+    } else if (message.includes("Please enter valid positive numbers")){
+        errorMessageElement.style.backgroundColor = 'red';
+        FadeOutErrorMessage();
+    }
+}
+//To avoid error kay usahay dili mudisplay ang game over
+function FadeOutErrorMessage(){
+    setTimeout(() => {
+        let fadeEffect = setInterval(() => {
+            if (errorMessageElement.style.opacity > 0) {
+                errorMessageElement.style.opacity -= 0.1; // Reduce opacity gradually
+            } else {
+                clearInterval(fadeEffect); // Stop fading when opacity reaches 0
+                errorMessageElement.style.display = 'none'; // Hide the element
+            }
+        }, 100); // Adjust the fade speed here (100ms interval)
+    }, 2000);
 }
 
 
@@ -234,7 +271,96 @@ startAutoPlayBtn.addEventListener('click', () => {
 // Flag for active auto-play
 let autoPlayTimer; // Variable to store the timer ID
 
-// Warnsdorff's Algorithm 
+function displayCelebration() {
+    // Create the congratulatory message element
+    const congratsMessage = document.createElement("div");
+    congratsMessage.style.position = "fixed";
+    congratsMessage.style.top = "50%";
+    congratsMessage.style.left = "50%";
+    congratsMessage.style.transform = "translate(-50%, -50%)";
+    congratsMessage.style.fontSize = "24px";
+    congratsMessage.style.fontWeight = "bold";
+    congratsMessage.style.color = "#4CAF50";
+    congratsMessage.style.textAlign = "center";
+    congratsMessage.style.opacity = 0;
+    congratsMessage.style.transition = "opacity 2s ease-out, transform 1s ease-out";
+    document.body.appendChild(congratsMessage);
+
+    // Smooth fade-in and slightly scale up the message
+    setTimeout(() => {
+        congratsMessage.style.opacity = 1;
+        congratsMessage.style.transform = "translate(-50%, -50%) scale(1.1)";
+    }, 100);
+
+    // Add more confetti pieces for a fuller effect (200 pieces)
+    for (let i = 0; i < 200; i++) { // Increase number of confetti pieces
+        const confetti = document.createElement("div");
+        confetti.style.position = "absolute";
+        confetti.style.width = "10px";
+        confetti.style.height = "10px";
+        confetti.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 60%)`;
+        confetti.style.borderRadius = "50%";
+        
+        // Set a random animation duration and delay for each piece
+        const duration = Math.random() * 2 + 2; // Duration between 2s and 4s
+        const delay = Math.random() * 1; // Random delay between 0s and 1s
+        
+        confetti.style.animation = `confetti ${duration}s ease-in-out ${delay}s forwards`;
+        confetti.style.left = `${Math.random() * 100}%`;
+        confetti.style.top = `-10%`;  // Start the confetti off-screen at the top
+        document.body.appendChild(confetti);
+        
+        // Remove confetti after animation ends
+        setTimeout(() => {
+            confetti.remove();
+        }, duration * 1000);
+    }
+
+    // Add CSS keyframes for the confetti animation dynamically
+    const styleSheet = document.createElement("style");
+    styleSheet.type = "text/css";
+    styleSheet.innerText = `
+        @keyframes confetti {
+            0% {
+                transform: translateY(0) rotate(0);
+                opacity: 1; /* Fully visible at the start */
+            }
+            80% {
+                opacity: 1; /* Confetti stays visible until near the end */
+            }
+            100% {
+                transform: translateY(120vh) rotate(${Math.random() * 360}deg); /* Fall beyond 100vh (off-screen) */
+                opacity: 0; /* Fade out before reaching the bottom */
+            }
+        }
+    `;
+    document.head.appendChild(styleSheet);
+}
+
+// Auto-Play Pause/Resume Button
+const pauseResumeBtn = document.getElementById('pauseResumeBtn');
+
+// Pause Auto-Play
+function pauseAutoPlay() {
+    if (isAutoPlaying && !isPaused) {
+        clearTimeout(autoPlayTimer); // Stop the scheduled auto-play move
+        isPaused = true;
+        pauseResumeBtn.textContent = "Resume"; // Update button text
+        displayError("Auto-Play paused. Click 'Resume' to continue.");
+    } else if (!isAutoPlaying) {
+        isPaused = false;
+        pauseResumeBtn.textContent = "Pause Auto-Play"; // Update button text
+        displayError("Click 'Auto-Play' first.");
+    } else if (isAutoPlaying && isPaused) {
+        isPaused = false;
+        pauseResumeBtn.textContent = "Pause Auto-Play"; // Update button text
+        displayError("Auto-Play resumed.");
+        // Resume from the current position
+        continueAutoPlay(); // NEW: Continue from current position
+    }
+}
+
+// Warnsdorff's Algorithm Auto-Play Logic
 function solveWarnsdorffAuto(x, y) {
     if (isAutoPlaying) {
         return; // Avoid overlapping execution
@@ -243,25 +369,37 @@ function solveWarnsdorffAuto(x, y) {
 
     // Check if the board is already solved
     if (path.length === rows * cols) {
-        displayError("Congratulations! The Knight's Tour is already completed.");
+        displayCelebration();  // Trigger the celebration animation
+        displayError(`Congratulations! The Knight's Tour is already completed. \n\n Do you want to play again? Please press "Reset Game" to play again or press "Main Menu" to exit. `);
         isAutoPlaying = false;
         return;
     }
 
+    // Start auto-play
+    continueAutoPlay(); // NEW: Start or resume auto-play
+}
+
+function continueAutoPlay() {
     // Start from the current position in the path
     const currentMoveCount = path.length;
 
-    function nextMove(moveCount, x, y, path) {
+    function nextMove(moveCount, x, y) {
         if (moveCount > rows * cols) {
-            displayError("Congratulations! The Knight's Tour is completed using Warnsdorff's mixed with backtrack Algorithm!");
+            displayCelebration(); // Trigger the celebration animation
+            displayError(`Congratulations! The Knight's Tour is completed using Warnsdorff's mixed with backtrack Algorithm! \n\n Do you want to play again? Please press "Reset Game" to play again or press "Main Menu" to exit. `);
             isAutoPlaying = false;
             return;
+        }
+
+        if (isPaused) {
+            return; // Stop progressing if paused
         }
 
         // Find the best possible next move based on Warnsdorff's heuristic
         const next = findBestMove(x, y);
         if (!next) {
             displayError(`No solution exists using Warnsdorff's mixed with backtrack Algorithm from this starting point. You visited ${moveCount - 1} squares out of ${rows * cols} possible on a ${rows}x${cols} board.`);
+            isAutoPlaying = false;
             return false;
         }
 
@@ -273,19 +411,24 @@ function solveWarnsdorffAuto(x, y) {
 
         // Schedule the next move, store the timer ID
         autoPlayTimer = setTimeout(() => {
-            if (!nextMove(moveCount + 1, nextX, nextY, path)) {
+            if (!nextMove(moveCount + 1, nextX, nextY)) {
                 // If next move didn't work, backtrack by removing the last move
                 path.pop();
                 board[nextX][nextY] = -1;
             }
-        }, 500); //diri nimo ma adjust and speed sa auto play
+        }, 500); // Adjust speed of auto-play
 
         return true;
     }
 
-    // Start from the next move, using backtracking
-    nextMove(currentMoveCount + 1, x, y, path);
+    // Get the current position
+    const [currentX, currentY] = path[path.length - 1];
+    nextMove(currentMoveCount + 1, currentX, currentY);
 }
+
+pauseResumeBtn.addEventListener('click', pauseAutoPlay);
+
+
 
 // Updated Button Event Handlers
 warnsdorffBtn.addEventListener('click', () => {
@@ -337,6 +480,7 @@ undoBtn.addEventListener('click', undoMove);
 rowsInput.addEventListener('change', initBoard);
 colsInput.addEventListener('change', initBoard);
 
+const MainMenuBtn = document.getElementById('MainMenuBtn');
 const startGameBtn = document.getElementById('startGameBtn');
 const introScreen = document.getElementById('intro');
 const gameContainer = document.getElementById('game-container');
@@ -347,13 +491,37 @@ startGameBtn.addEventListener('click', function () {
     gameContainer.classList.add('visible');
 });
 
+
+// Main Menu button functionality
+MainMenuBtn.addEventListener('click', function () {
+    // Make intro screen visible and hide the game container
+    introScreen.classList.add('visible');  // Show the intro screen
+    introScreen.classList.remove('hidden'); // Remove the hidden class (if present)
+    
+    gameContainer.classList.add('hidden'); // Hide the game container
+    gameContainer.classList.remove('visible'); // Remove the visible class (if present)
+
+    // Trigger the click event programmatically
+    resetBtn.click();
+
+    isPaused = false;
+    pauseResumeBtn.textContent = "Pause Auto-Play"; // Update button text
+
+});
+
 resetBtn.addEventListener('click', () => {
     // Stop auto-play if it's active
     isAutoPlaying = false; 
+
+    isPaused = false;
+    pauseResumeBtn.textContent = "Pause Auto-Play"; // Update button text
+
     // Clear the auto-play timer
     clearTimeout(autoPlayTimer); 
     initBoard(); 
 });
 
+
 // Initialize the board
 initBoard();
+
