@@ -278,7 +278,7 @@ function solveWarnsdorffAuto(x, y) {
                 path.pop();
                 board[nextX][nextY] = -1;
             }
-        }, 200); // Auto-move every 500ms
+        }, 500); //diri nimo ma adjust and speed sa auto play
 
         return true;
     }
