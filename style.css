@@ -25,13 +25,83 @@ body {
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
-    position: relative;
+    position: absolute;
     opacity: 0;
     pointer-events: none; 
     transition: opacity 0.5s ease-in-out; 
 }
 
 #game-container.visible {
+    opacity: 1;
+    pointer-events: auto; 
+}
+
+#customization_container h1 {
+    color: rgb(255, 255, 255);
+    text-align: absolute;
+    font-family: 'Arial', sans-serif;
+    transition: opacity 1s ease-in-out; /* Smooth fade-out */
+    position: absolute;
+    top: 10%; /* Adjust to move text vertically */
+    left: 50%; /* Center horizontally */
+    transform: translateX(-50%); /* Correct centering offset */
+    text-align: center; /* Center-align the text content */
+    font-size: 32px;
+    font-weight: bold;
+    text-shadow: 
+        1px 1px 2px #818080, /* Light shadow */
+        2px 2px 5px #010101; /* Darker shadow for depth */
+}
+/* Chessboard container */
+#chessboard_container {
+    width: 800px;
+    height: 800px;
+    display: flex;
+    flex-wrap: wrap; /* Allows for grid layout */
+    border: 4px solid black;
+    background-color: #f0d9b5; /* Light chessboard color */
+    position: absolute;
+    top: 50%; /* Center vertically */
+    right: 900px; /* Position near the left edge */
+    transform: translateY(-50%);
+}
+
+/* Chessboard squares */
+.square {
+    width: 12.5%; /* Each square is 1/8th of the board's width */
+    height: 12.5%; /* Each square is 1/8th of the board's height */
+}
+
+.black {
+    background-color: #b58863;
+}
+
+.white {
+    background-color: #f0d9b5;
+}
+
+/* Customization container */
+#customization_container {
+    width: 600px; 
+    height: 620px; 
+    padding: 90px;
+    background-color: rgba(73, 73, 73, 0.9); /* Slightly transparent */
+    border-radius: 10px;
+    box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.1);
+    border: 4px solid rgb(122, 122, 122);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    position: absolute;
+    top: 50%; /* Center vertically */
+    right: 100px; /* Position near the left edge */
+    transform: translateY(-50%); /* Adjust for vertical centering */
+    opacity: 1; /* Fully visible for demo purposes */
+    pointer-events: auto; 
+    transition: opacity 0.5s ease-in-out; 
+}
+#customization_container.visible {
     opacity: 1;
     pointer-events: auto; 
 }
@@ -157,6 +227,11 @@ p {
 #loading_image {
     transform: scaleX(-1); /* Mirror the image horizontally */
 }
+/* Visible state */
+.visible {
+    opacity: 1;
+    pointer-events: auto;
+}
 
 .hidden {
     opacity: 0;
@@ -277,22 +352,6 @@ p {
     margin-top: 20px;
 }
 
-#startGameBtn {
-    padding: 15px 30px;
-    font-size: 20px;
-    color:#ffffff;
-    background-color: #004882;
-    border: 2px solid #01326a; /* Darker blue border */
-    border-radius: 10px;
-    cursor: pointer;
-    width: 300px;
-    transition: background-color 0.3s;
-}
-
-#startGameBtn:hover {
-    background-color: #01326a;
-}
-
 /* Animations */
 @keyframes knightMove {
     0%, 100% {
@@ -312,6 +371,38 @@ p {
     }
 }
 
+#startGameBtn {
+    padding: 15px 30px;
+    font-size: 20px;
+    color:#ffffff;
+    background-color: #004882;
+    border: 2px solid #01326a; /* Darker blue border */
+    border-radius: 10px;
+    cursor: pointer;
+    width: 300px;
+    transition: background-color 0.3s;
+}
+
+#startGameBtn:hover {
+    background-color: #01326a;
+}
+
+#CustomizeBoardBtn {
+    padding: 15px 30px;
+    font-size: 20px;
+    color:#ffffff;
+    background-color: #004882;
+    border: 2px solid #01326a; /* Darker blue border */
+    border-radius: 10px;
+    cursor: pointer;
+    width: 300px;
+    transition: background-color 0.3s;
+}
+
+#CustomizeBoardBtn:hover {
+    background-color: #01326a;
+}
+
 #MainMenuBtn {
     padding: 15px 30px;
     font-size: 20px;
@@ -326,6 +417,40 @@ p {
 
 #MainMenuBtn:hover {
     background-color: #01326a;
+}
+
+#MainMenuBtnCB {
+    padding: 15px 30px;
+    font-size: 20px;
+    color:#ffffff;
+    background-color: #004882;
+    border: 2px solid #01326a; /* Darker blue border */
+    border-radius: 10px;
+    cursor: pointer;
+    margin-top: 550px; /* Push button to the bottom */
+    width: 550px;
+}
+
+#MainMenuBtnCB:hover {
+    background-color: #01326a;
+}
+
+/* Save Button */
+#SaveBtn {
+    padding: 15px 30px;
+    font-size: 20px;
+    color: #ffffff;
+    background-color: #009f25;
+    border: 2px solid #03790a;
+    border-radius: 10px;
+    cursor: pointer;
+    margin-top: -135px; /* Adds space between controls and button */
+    width: 100%;
+    max-width: 550px; /* Optional: max width for the button */
+}
+
+#SaveBtn:hover {
+    background-color: #03790a;
 }
 
 #autoPlayDialog {
@@ -349,6 +474,65 @@ p {
 
 #autoPlayDialog.hidden {
     display: none;
+}
+
+/* Color controls container */
+#color-controls {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Center horizontally */
+    justify-content: center; /* Center vertically */
+    margin-top: -400px;
+    padding: 10px;
+    background-color: rgba(255, 255, 255, 0.8);
+    border-radius: 10px;
+    box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.1);
+    width: 100%; /* Adjust the width of the controls */
+    max-width: 525px; /* Optional: max width for control panel */
+}
+
+#color-controls label {
+    margin: 30px 0;
+    font-size: 30px;
+}
+
+#color-controls input {
+    width: 250px;
+    margin-bottom: 15px;
+}
+/* Modal Style */
+#saveModal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+    display: none; /* Hidden by default */
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background-color: white;
+    padding: 30px;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.1);
+}
+
+#closeModalBtn {
+    padding: 10px 20px;
+    background-color: #009f25;
+    border: none;
+    border-radius: 5px;
+    color: white;
+    cursor: pointer;
+}
+
+#closeModalBtn:hover {
+    background-color: #03790a;
 }
 
 

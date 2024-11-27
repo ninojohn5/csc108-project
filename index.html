@@ -32,8 +32,29 @@
             <img src="img/knight.webp" alt="Knight" id="animatedKnight">
         </div>
         <button id="startGameBtn">Start Game</button>
+        <button id="CustomizeBoardBtn">Customize Board</button>
     </div>
 
+    <!-- Cutomization Container -->
+    <div id="customization_container">
+        <h1>BOARD CUSTOMIZATION</h1>
+        <!-- Chessboard -->
+        <div id="chessboard_container"></div>
+        
+        <button id="MainMenuBtnCB">Main Menu</button>
+        <button id="SaveBtn">Save Changes</button>
+
+        <div id="color-controls">
+            <label for="black_square_color">Black Square Color:</label>
+            <input type="color" id="black_square_color" value="#b58863">
+        
+            <label for="white_square_color">White Square Color:</label>
+            <input type="color" id="white_square_color" value="#f0d9b5">
+        </div>
+
+
+    </div>    
+    
     <!-- Game Container -->
     <div id="game-container">
         <h1>Knight's Tour Game</h1>
@@ -71,6 +92,14 @@
     <!-- Auto-Play Dialog -->
     <div id="autoPlayDialog" class="hidden">
         <button id="warnsdorffBtn">Warnsdorff's Algorithm</button>
+    </div>
+
+    <!-- Modal Dialog -->
+    <div id="saveModal" style="display: none;">
+        <div class="modal-content">
+            <p>Colors saved successfully!</p>
+            <button id="closeModalBtn">OK</button>
+        </div>
     </div>
 
     <script src="manual.js"></script>

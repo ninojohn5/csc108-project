@@ -61,17 +61,25 @@ function initBoard() {
     drawBoard();
 }
 
-// Draw the chessboard and moves
+// Function to draw the board (updated to use stored colors)
 function drawBoard() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+    // Get the colors from localStorage (or use default values)
+    const blackColor = localStorage.getItem('blackSquareColor') || '#b58863';
+    const whiteColor = localStorage.getItem('whiteSquareColor') || '#f0d9b5';
+
     for (let i = 0; i < rows; i++) {
         for (let j = 0; j < cols; j++) {
-            ctx.fillStyle = (i + j) % 2 === 0 ? '#f0d9b5' : '#b58863';
+            // Use the colors stored in localStorage
+            ctx.fillStyle = (i + j) % 2 === 0 ? whiteColor : blackColor;
             ctx.fillRect(j * squareSize, i * squareSize, squareSize, squareSize);
 
             if (board[i][j] > 0) {
-                ctx.fillStyle = 'black';
+                ctx.fillStyle = 'black'; // Set the color for the number
+                ctx.strokeStyle = 'white'; // Set the stroke color
+                ctx.lineWidth = 1; // Set the stroke width
+
                 ctx.font = `${squareSize / 2}px Arial`;
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'middle';
@@ -80,9 +88,16 @@ function drawBoard() {
                     j * squareSize + squareSize / 2,
                     i * squareSize + squareSize / 2
                 );
+                // Apply stroke to the text
+                ctx.strokeText(board[i][j], j * squareSize + squareSize / 2, i * squareSize + squareSize / 2);
+
+                // Fill the text with black color
+                ctx.fillStyle = 'black';
+                ctx.fillText(board[i][j], j * squareSize + squareSize / 2, i * squareSize + squareSize / 2);
+
             }
 
-            // Highlight possible moves
+            // Highlight possible moves (optional)
             if (possibleMoves.some(([x, y]) => x === i && y === j)) {
                 ctx.beginPath();
                 ctx.arc(
@@ -100,6 +115,7 @@ function drawBoard() {
     }
 }
 
+
 function calculatePossibleMoves(x, y) {
     possibleMoves = [];
     for (let i = 0; i < 8; i++) {
@@ -113,7 +129,7 @@ function calculatePossibleMoves(x, y) {
     // Only display the "Game over!" message if auto-play is NOT active
     if (possibleMoves.length === 0 && path.length !== rows * cols && !isAutoPlaying) {
         displayError(
-            `Game over! You visited ${path.length} squares out of ${rows * cols} possible on a ${rows}x${cols} board.\n\nPress "Reset Game" or "Undo your last move" to continue.`
+            `GAME OVER!\n\n You visited ${path.length} squares out of ${rows * cols} possible on a ${rows}x${cols} board.\n\nPress "Reset Game" or "Undo your last move" to continue. `
         );
     }
 }
@@ -149,7 +165,7 @@ canvas.addEventListener('click', function (event) {
 
             if (path.length === rows * cols) {
                 displayCelebration();  // Trigger the celebration animation
-                displayError(`Congratulations! You've completed the Knight's Tour!\n\n Do you want to play again? Please press "Reset Game" to play again or press "Main Menu" to exit. `);
+                displayError(`Congratulations!\n\n You've completed the Knight's Tour!\n\n Do you want to play again? Please press "Reset Game" to play again or press "Main Menu" to exit. `);
             }
         }
     }
@@ -194,9 +210,13 @@ function displayError(message) {
 
     // Set the color based on the message
     if (message.includes("Congratulations!")) {
-        errorMessageElement.style.backgroundColor = 'green'; 
+        errorMessageElement.style.backgroundColor = 'darkgreen'; 
+        errorMessageElement.style.padding = '50px';
+        errorMessageElement.style.border = '2px solid lightgreen';
     } else if (message.includes("Game over!") || message.includes("No solution exists")) {
-        errorMessageElement.style.backgroundColor = 'red'; 
+        errorMessageElement.style.backgroundColor = 'firebrick';
+        errorMessageElement.style.padding = '50px';
+        errorMessageElement.style.border = '2px solid lightcoral'; 
     } else if (message.includes("Please make one initial move")) {
         errorMessageElement.style.backgroundColor = 'red';
         errorMessageElement.style.color = 'white';
@@ -206,6 +226,7 @@ function displayError(message) {
         FadeOutErrorMessage();
     } else if (message.includes("Auto-Play paused.")){
         errorMessageElement.style.backgroundColor = 'red';
+        FadeOutErrorMessage();
     } else if (message.includes("Auto-Play resumed.")){
         errorMessageElement.style.backgroundColor = 'green';
         FadeOutErrorMessage();
@@ -370,7 +391,7 @@ function solveWarnsdorffAuto(x, y) {
     // Check if the board is already solved
     if (path.length === rows * cols) {
         displayCelebration();  // Trigger the celebration animation
-        displayError(`Congratulations! The Knight's Tour is already completed. \n\n Do you want to play again? Please press "Reset Game" to play again or press "Main Menu" to exit. `);
+        displayError(`Congratulations!\n\n The Knight's Tour is already completed. \n\n Do you want to play again? Please press "Reset Game" to play again or press "Main Menu" to exit. `);
         isAutoPlaying = false;
         return;
     }
@@ -386,7 +407,7 @@ function continueAutoPlay() {
     function nextMove(moveCount, x, y) {
         if (moveCount > rows * cols) {
             displayCelebration(); // Trigger the celebration animation
-            displayError(`Congratulations! The Knight's Tour is completed using Warnsdorff's mixed with backtrack Algorithm! \n\n Do you want to play again? Please press "Reset Game" to play again or press "Main Menu" to exit. `);
+            displayError(`Congratulations!\n\n The Knight's Tour is completed using Warnsdorff's mixed with backtrack Algorithm! \n\n Do you want to play again? Please press "Reset Game" to play again or press "Main Menu" to exit. `);
             isAutoPlaying = false;
             return;
         }
@@ -398,7 +419,7 @@ function continueAutoPlay() {
         // Find the best possible next move based on Warnsdorff's heuristic
         const next = findBestMove(x, y);
         if (!next) {
-            displayError(`No solution exists using Warnsdorff's mixed with backtrack Algorithm from this starting point. You visited ${moveCount - 1} squares out of ${rows * cols} possible on a ${rows}x${cols} board.`);
+            displayError(`GAME OVER!\n\nNo solution exists using Warnsdorff's mixed with backtrack Algorithm from this starting point. You visited ${moveCount - 1} squares out of ${rows * cols} possible on a ${rows}x${cols} board.\n\nPress "Reset Game" or "Undo your last move" to continue. `);
             isAutoPlaying = false;
             return false;
         }
@@ -480,15 +501,38 @@ undoBtn.addEventListener('click', undoMove);
 rowsInput.addEventListener('change', initBoard);
 colsInput.addEventListener('change', initBoard);
 
+const MainMenuBtnCB = document.getElementById('MainMenuBtnCB');
 const MainMenuBtn = document.getElementById('MainMenuBtn');
 const startGameBtn = document.getElementById('startGameBtn');
 const introScreen = document.getElementById('intro');
 const gameContainer = document.getElementById('game-container');
+const CustomizeBoardBtn = document.getElementById('CustomizeBoardBtn')
+const customization_container = document.getElementById('customization_container')
+
+
+// Main Menu button functionality
+MainMenuBtnCB.addEventListener('click', function () {
+    introScreen.classList.add('visible'); // Show the intro screen
+    introScreen.classList.remove('hidden'); // Ensure intro screen is visible
+    
+    customization_container.classList.add('hidden'); // Hide the customization container
+    customization_container.classList.remove('visible'); // Ensure customization container is hidden
+});
+
+// Customization button event listener
+CustomizeBoardBtn.addEventListener('click', function () {
+    introScreen.classList.add('hidden'); // Hide intro screen
+    customization_container.classList.add('visible'); // Show customization container
+    customization_container.style.opacity = "1";
+    customization_container.style.pointerEvents = "auto";
+});
 
 // Start Game button event listener
 startGameBtn.addEventListener('click', function () {
     introScreen.classList.add('hidden');
     gameContainer.classList.add('visible');
+    customization_container.style.opacity = "0";
+    customization_container.style.pointerEvents = "none";
 });
 
 
@@ -500,6 +544,7 @@ MainMenuBtn.addEventListener('click', function () {
     
     gameContainer.classList.add('hidden'); // Hide the game container
     gameContainer.classList.remove('visible'); // Remove the visible class (if present)
+
 
     // Trigger the click event programmatically
     resetBtn.click();
@@ -520,8 +565,94 @@ resetBtn.addEventListener('click', () => {
     clearTimeout(autoPlayTimer); 
     initBoard(); 
 });
+// Select the color input elements for black and white square colors
+const blackSquareColorPicker = document.getElementById('black_square_color');
+const whiteSquareColorPicker = document.getElementById('white_square_color');
+
+// Get the chessboard container
+const chessboardContainer = document.getElementById('chessboard_container');
+
+// Create the chessboard squares
+function createChessboard() {
+    for (let i = 0; i < 64; i++) {
+        const square = document.createElement('div');
+        square.classList.add('square');
+        
+        // Add black or white class based on the position
+        if ((Math.floor(i / 8) + (i % 8)) % 2 === 0) {
+            square.classList.add('white');
+        } else {
+            square.classList.add('black');
+        }
+
+        chessboardContainer.appendChild(square);
+    }
+}
+
+// Function to update the colors of the chessboard squares
+function updateSquareColors() {
+    const blackColor = blackSquareColorPicker.value;
+    const whiteColor = whiteSquareColorPicker.value;
+
+    // Get all the chessboard squares
+    const squares = document.querySelectorAll('.square');
+    squares.forEach(square => {
+        if (square.classList.contains('black')) {
+            square.style.backgroundColor = blackColor;
+        } else if (square.classList.contains('white')) {
+            square.style.backgroundColor = whiteColor;
+        }
+    });
+}
+
+// Event listeners for the color input elements
+blackSquareColorPicker.addEventListener('input', updateSquareColors);
+whiteSquareColorPicker.addEventListener('input', updateSquareColors);
+
+// Get the elements
+const blackSquareColorInput = document.getElementById('black_square_color');
+const whiteSquareColorInput = document.getElementById('white_square_color');
+const saveButton = document.getElementById('SaveBtn');
+const saveModal = document.getElementById('saveModal');
+const closeModalBtn = document.getElementById('closeModalBtn');
+
+// Event listener for the Save button
+saveButton.addEventListener('click', function() {
+    // Get the colors from the input fields
+    const blackColor = blackSquareColorInput.value;
+    const whiteColor = whiteSquareColorInput.value;
+
+    // Save the selected colors to localStorage
+    localStorage.setItem('blackSquareColor', blackColor);
+    localStorage.setItem('whiteSquareColor', whiteColor);
+
+    // Show the modal
+    saveModal.style.display = 'flex';
+
+    // Redraw the chessboard with the new colors
+    drawBoard();
+});
+
+// Event listener for the modal close button
+closeModalBtn.addEventListener('click', function() {
+    // Hide the modal when the "OK" button is clicked
+    saveModal.style.display = 'none';
+});
 
 
+// Function to update the chessboard with the saved colors
+function updateChessboardColors(blackColor, whiteColor) {
+    const squares = document.querySelectorAll('.square');
+    squares.forEach(square => {
+        if (square.classList.contains('black')) {
+            square.style.backgroundColor = blackColor;
+        } else if (square.classList.contains('white')) {
+            square.style.backgroundColor = whiteColor;
+        }
+    });
+}
+// Initialize the chessboard
+createChessboard();
 // Initialize the board
 initBoard();
 
