@@ -537,7 +537,8 @@ p {
 #closeModalBtn:hover {
     background-color: #03790a;
 }
-/* Modal background */
+/* Modal Background */
+#saveModal,
 .modal {
     display: none; /* Hidden by default */
     position: fixed;
@@ -545,94 +546,87 @@ p {
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.8); /* Dark overlay */
+    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
     z-index: 1000;
-    align-items: center;
-    justify-content: center;
+    display: flex; /* Flexbox for centering */
+    align-items: center; /* Vertical centering */
+    justify-content: center; /* Horizontal centering */
     animation: fadeIn 0.3s ease; /* Fade-in effect */
-}
-
-/* Modal content box */
-.modal_content {
-    background-color: #2d3748;
-    border: 2px solid #9b9b9b;
-    color: white;
-    padding: 30px;
-    border-radius: 10px;
-    width: 50%;
-    max-width: 600px;
-    min-width: 300px;
-    text-align: center;
-    box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.5);
-    animation: zoomIn 0.3s ease; /* Optional animation */
-}
-.modal_content h2 {
-    padding-left: 20px;
-    margin-bottom: 10px;
-    font-size: 30px;
-}
-.modal_content p {
-    font-weight: normal; /* Removes bold styling */
-    padding-left: 20px;
-    margin-bottom: 10px;
-    font-size: 20px;
     
 }
 
-/* Game Rules List */
+/* Modal Content Box */
+.modal-content,
+.modal_content {
+    background-color: #2d3748; /* Dark background */
+    border: 2px solid #9b9b9b;
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center; /* Center text inside the modal */
+    box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.5);
+    width: 90%;
+    max-width: 600px; /* Limit max width */
+    min-width: 600px; /* Set a minimum width */
+    animation: zoomIn 0.3s ease; /* Optional zoom animation */
+    margin: auto; /* Center horizontally */
+    max-height: 850px;
+    overflow-y: auto; /* Allow scrolling if content exceeds max height */
+}
+
+/* Modal Headings and Paragraphs */
+.modal_content h2 {
+    margin-bottom: 15px;
+    font-size: 28px;
+}
+
+.modal_content p {
+    font-weight: normal;
+    margin-bottom: 15px;
+    font-size: 18px;
+}
+
+/* Game Rules Container */
 .rules {
     background-color: #152238;
     box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.5);
     border: 2px solid #444;
     color: white;
-    padding: 2px;
+    padding: 20px; /* Adjusted for better spacing */
     border-radius: 10px;
-    width: 90%;
-    max-width: 600px;
-    min-width: 300px;
-    height: 500px;
-    text-align: center;
-    margin: 50px auto; /* Centers horizontally */
-    position: relative; /* For stacking context if needed */
-
+    width: 90%; /* Responsive width */
+    max-width: 600px; /* Limit max width */
+    min-width: 300px; /* Set minimum width */
+    text-align: left; /* Left-align for better readability */
+    margin: 40px auto; /* Centers horizontally */
+    overflow-y: auto; /* Allow scroll if content exceeds height */
+    min-height: 540px; /* Set max height for inner rules section */
 }
-.rules ul li strong {
-    text-align: justify;
-    display: block; /* Ensures proper block-level alignmen */
-    padding-left: 20px;
-    margin-bottom: 90px;
-    font-size: 16px;
-}
-.rules  ul  li {
-    list-style-type: none; /* Removes the dots */
-    font-size: 17px;
-    text-align: right; /* Align text to the center */
+.rules ul li {
+    font-size: 20px; /* Increase text size */
     margin-top: 10px;
 }
-    
-.rules ul li ul li {
-    text-align: center; /* Align text to the center */
-    list-style-type: none; /* Removes the dots */
-    margin-bottom: 10px;
-    font-size: 17px;
-}
-
 /* Close/Start Game Button */
+#closeModalBtn,
 #closeModalBtn2 {
+    display: block; /* Center button inside modal */
     padding: 10px 20px;
-    font-size: 16px;
-    color: #ffffff;
+    margin: 20px auto 0; /* Center horizontally and add spacing */
+    font-size: 20px;
+    color: white;
     background-color: #3182ce;
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    margin-top: 20px;
     transition: background-color 0.3s ease;
+    width: 50%; /* Adjust width for better design */
 }
 
+#closeModalBtn:hover,
 #closeModalBtn2:hover {
     background-color: #2b6cb0;
 }
+
 
 /* Fade-in animation for modal background */
 @keyframes fadeIn {
