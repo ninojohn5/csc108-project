@@ -126,9 +126,9 @@ function calculatePossibleMoves(x, y) {
         }
     }
 
-    // Only display the "Game over!" message if auto-play is NOT active
-    if (possibleMoves.length === 0 && path.length !== rows * cols && !isAutoPlaying) {
-        displayError(
+        // Display "Game over!" regardless of auto-play if there are no moves left
+        if (possibleMoves.length === 0 && path.length !== rows * cols) {
+            displayError(
             `GAME OVER! ☹️\n\n You visited ${path.length} squares out of ${rows * cols} possible on a ${rows}x${cols} board.\n\nPress "Reset Game" or "Undo your last move" to continue. `
         );
     }
@@ -140,7 +140,14 @@ function isWithinBounds(x, y) {
     return x >= 0 && x < rows && y >= 0 && y < cols;
 }
 
+function switchToManualPlay() {
+    isAutoPlaying = false;
+    isPaused = false;
+    clearTimeout(autoPlayTimer);
+}
+
 canvas.addEventListener('click', function (event) {
+    switchToManualPlay();
     const rect = canvas.getBoundingClientRect();
     const x = Math.floor((event.clientY - rect.top) / squareSize);
     const y = Math.floor((event.clientX - rect.left) / squareSize);
@@ -366,20 +373,21 @@ function pauseAutoPlay() {
     if (isAutoPlaying && !isPaused) {
         clearTimeout(autoPlayTimer); // Stop the scheduled auto-play move
         isPaused = true;
-        pauseResumeBtn.textContent = "Resume"; // Update button text
+        isAutoPlaying = false; // Update flag
+        pauseResumeBtn.textContent = "Resume";
         displayError("Auto-Play paused. Click 'Resume' to continue.");
     } else if (!isAutoPlaying) {
         isPaused = false;
-        pauseResumeBtn.textContent = "Pause Auto-Play"; // Update button text
+        pauseResumeBtn.textContent = "Pause Auto-Play";
         displayError("Click 'Auto-Play' first.");
     } else if (isAutoPlaying && isPaused) {
         isPaused = false;
-        pauseResumeBtn.textContent = "Pause Auto-Play"; // Update button text
+        isAutoPlaying = true; // Resume auto-play
+        pauseResumeBtn.textContent = "Pause Auto-Play";
         displayError("Auto-Play resumed.");
-        // Resume from the current position
-        continueAutoPlay(); // NEW: Continue from current position
+        continueAutoPlay(); // Continue auto-play
     }
-}
+} 
 
 // Warnsdorff's Algorithm Auto-Play Logic
 function solveWarnsdorffAuto(x, y) {
