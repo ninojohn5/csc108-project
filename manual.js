@@ -141,69 +141,92 @@ function isWithinBounds(x, y) {
 }
 
 function switchToManualPlay() {
-    isAutoPlaying = false;
-    isPaused = false;
-    clearTimeout(autoPlayTimer);
+    /* 
+    switchToManualPlay():
+    Stops auto-play, unpauses the game, and clears any active timers.   
+    */
+
+    isAutoPlaying = false;  // Disable auto-play
+    isPaused = false;  // Unpause the game
+    clearTimeout(autoPlayTimer);  // Clear the auto-play timer
 }
 
 canvas.addEventListener('click', function (event) {
-    switchToManualPlay();
-    const rect = canvas.getBoundingClientRect();
-    const x = Math.floor((event.clientY - rect.top) / squareSize);
-    const y = Math.floor((event.clientX - rect.left) / squareSize);
+    /* 
+Canvas click event listener:
+- Switches to manual play mode on click.
+- Calculates the clicked position and updates the board if the move is valid.
+- Triggers the completion celebration if all moves are made in the Knight's Tour. */
 
-    if (x >= 0 && x < rows && y >= 0 && y < cols) {
-        if (startX === -1 && startY === -1) {
-            startX = x;
-            startY = y;
-            board[x][y] = path.length + 1;
-            path.push([x, y]);
-            calculatePossibleMoves(x, y);
-            clearError();
-            drawBoard();
-        } else if (possibleMoves.some(([nx, ny]) => nx === x && ny === y)) {
-            startX = x;
-            startY = y;
-            board[x][y] = path.length + 1;
-            path.push([x, y]);
-            calculatePossibleMoves(x, y);
-            clearError();
-            drawBoard();
+switchToManualPlay();  // Switch to manual play on click
+const rect = canvas.getBoundingClientRect();
+const x = Math.floor((event.clientY - rect.top) / squareSize);
+const y = Math.floor((event.clientX - rect.left) / squareSize);
 
-            if (path.length === rows * cols) {
-                displayCelebration();  // Trigger the celebration animation
-                displayError(`Congratulations! 🎉\n\n You've completed the Knight's Tour!\n\n Do you want to play again? Please press "Reset Game" to play again or press "Main Menu" to exit. `);
-            }
+if (x >= 0 && x < rows && y >= 0 && y < cols) {
+    if (startX === -1 && startY === -1) {
+        startX = x;  // Set starting point
+        startY = y;
+        board[x][y] = path.length + 1;  // Mark the move on the board
+        path.push([x, y]);  // Add move to path
+        calculatePossibleMoves(x, y);  // Recalculate possible moves
+        clearError();  // Clear any error
+        drawBoard();  // Redraw the board
+    } else if (possibleMoves.some(([nx, ny]) => nx === x && ny === y)) {
+        startX = x;  // Update starting point
+        startY = y;
+        board[x][y] = path.length + 1;  // Mark the move on the board
+        path.push([x, y]);  // Add move to path
+        calculatePossibleMoves(x, y);  // Recalculate possible moves
+        clearError();  // Clear any error
+        drawBoard();  // Redraw the board
+
+        if (path.length === rows * cols) {
+            displayCelebration();  // Trigger celebration if completed
+            displayError(`Congratulations! 🎉\n\n You've completed the Knight's Tour!\n\n Do you want to play again? Please press "Reset Game" to play again or press "Main Menu" to exit.`);
+        }
         }
     }
 });
 
 // Undo the last move
 function undoMove() {
-    if (path.length > 1) {
-        const [prevX, prevY] = path.pop();
-        board[prevX][prevY] = 0;
-        const [lastX, lastY] = path[path.length - 1];
-        startX = lastX;
-        startY = lastY;
-        calculatePossibleMoves(startX, startY);
-        drawBoard();
-        clearError();
-    } else if (path.length === 1) {
-        const [initialX, initialY] = path.pop();
-        board[initialX][initialY] = 0;
-        startX = startY = -1;
-        possibleMoves = [];
-        drawBoard();
-        clearError();
-    } else {
-        displayError("No moves to undo! The board has been cleared.");
-        board = Array.from({ length: rows }, () => Array(cols).fill(0));
-        path = [];
-        startX = startY = -1;
-        possibleMoves = [];
-        drawBoard();
-    }
+
+    /* 
+This function undoes the last move by updating the board, path, and possible moves.
+- If multiple moves exist: Removes the last move, updates the board, recalculates moves, and redraws.
+- If only one move exists: Resets the starting point, clears possible moves, and redraws.
+- If no moves exist: Resets the board, clears the path, and displays an error.
+*/
+
+
+if (path.length > 1) {
+    // Case 1: Undo the most recent move if there are multiple moves.
+    const [prevX, prevY] = path.pop();
+    board[prevX][prevY] = 0;
+    const [lastX, lastY] = path[path.length - 1];
+    startX = lastX;
+    startY = lastY;
+    calculatePossibleMoves(startX, startY);
+    drawBoard(); // Refresh the board display.
+    clearError();
+} else if (path.length === 1) {
+    // Case 2: Handle the last remaining move.
+    const [initialX, initialY] = path.pop();
+    board[initialX][initialY] = 0;
+    startX = startY = -1;
+    possibleMoves = [];
+    drawBoard();
+    clearError();
+} else {
+    // Case 3: No moves to undo; reset the game state.
+    displayError("No moves to undo! The board has been cleared."); // Show an error message.
+    board = Array.from({ length: rows }, () => Array(cols).fill(0));
+    path = []; // Clear the path.
+    startX = startY = -1;
+    possibleMoves = [];
+    drawBoard();
+}
 }
 
 //To display prompt messages
@@ -265,11 +288,11 @@ errorMessageElement.addEventListener('click', function () {
 });
 
 function clearError() {
-    errorMessageElement.style.opacity = 0;
+    errorMessageElement.style.opacity = 0;  // Fade out error message
     setTimeout(() => {
-        errorMessageElement.style.display = 'none';
-    }, 10000000);
-    errorMessageElement.style.pointerEvents = 'none';
+        errorMessageElement.style.display = 'none';  // Hide the error message after delay
+    }, 10000000);  // Large delay (effectively hides after a long time)
+    errorMessageElement.style.pointerEvents = 'none';  // Disable interaction with error message
 }
 
 // Auto-Play Button Logic
@@ -391,22 +414,33 @@ function pauseAutoPlay() {
 
 // Warnsdorff's Algorithm Auto-Play Logic
 function solveWarnsdorffAuto(x, y) {
+
+    /* 
+The way this algorithm works:
+Warnsdorff's Rule is combined with backtracking to solve the Knight's Tour.
+1. It prioritizes moves that leave the knight with the fewest future options (Warnsdorff's heuristic).
+2. If no valid move exists, the algorithm backtracks by undoing the last move.
+3. The process continues until the board is completely filled or no solution is possible.
+4. Auto-play logic handles step-by-step execution with visual updates.
+*/
+
+
     if (isAutoPlaying) {
-        return; // Avoid overlapping execution
+        return; // Prevent multiple auto-play executions
     }
     isAutoPlaying = true;
 
-    // Check if the board is already solved
+    // If the board is already solved, display celebration and exit
     if (path.length === rows * cols) {
-        displayCelebration();  // Trigger the celebration animation
-        displayError(`Congratulations! 🎉\n\n The Knight's Tour is already completed. \n\n Do you want to play again? Please press "Reset Game" to play again or press "Main Menu" to exit. `);
+        displayCelebration();  // Trigger celebration
+        displayError(`Congratulations! 🎉\n\n The Knight's Tour is already completed.`); 
         isAutoPlaying = false;
         return;
     }
 
-    // Start auto-play
-    continueAutoPlay(); // NEW: Start or resume auto-play
+    continueAutoPlay(); // Start auto-play
 }
+
 
 function continueAutoPlay() {
     // Start from the current position in the path
@@ -433,16 +467,15 @@ function continueAutoPlay() {
         }
 
         const [nextX, nextY] = next;
-        path.push([nextX, nextY]);
-        board[nextX][nextY] = moveCount;
-        calculatePossibleMoves(nextX, nextY); // Highlight possible moves
-        drawBoard();
+        path.push([nextX, nextY]);  // Add the move to the path
+        board[nextX][nextY] = moveCount; // Update the board with the move
+        calculatePossibleMoves(nextX, nextY); // Recalculate possible moves
+        drawBoard();  // Redraw the board
 
-        // Schedule the next move, store the timer ID
+        // Schedule next move
         autoPlayTimer = setTimeout(() => {
             if (!nextMove(moveCount + 1, nextX, nextY)) {
-                // If next move didn't work, backtrack by removing the last move
-                path.pop();
+                path.pop();  // Backtrack if the move fails
                 board[nextX][nextY] = -1;
             }
         }, 500); // Adjust speed of auto-play
@@ -450,9 +483,8 @@ function continueAutoPlay() {
         return true;
     }
 
-    // Get the current position
     const [currentX, currentY] = path[path.length - 1];
-    nextMove(currentMoveCount + 1, currentX, currentY);
+    nextMove(currentMoveCount + 1, currentX, currentY);  // Start the next move
 }
 
 pauseResumeBtn.addEventListener('click', pauseAutoPlay);
@@ -462,10 +494,10 @@ pauseResumeBtn.addEventListener('click', pauseAutoPlay);
 // Updated Button Event Handlers
 warnsdorffBtn.addEventListener('click', () => {
     if (startX === -1 || startY === -1) {
-        displayError("Please make one initial move by clicking on the board.");
+        displayError("Please make one initial move by clicking on the board.");  // Error if no initial move
         return;
     }
-    solveWarnsdorffAuto(startX, startY);
+    solveWarnsdorffAuto(startX, startY);  // Start solving with Warnsdorff's heuristic
 });
 
 // Helper Functions (Warnsdorff)
@@ -473,33 +505,36 @@ function findBestMove(x, y) {
     let minDegree = Infinity;
     let bestMove = null;
 
+    // Loop through possible moves to find the one with the fewest future options
     for (let i = 0; i < 8; i++) {
         const nx = x + moveX[i];
         const ny = y + moveY[i];
 
         if (isWithinBounds(nx, ny) && board[nx][ny] === 0) {
             const degree = countMoves(nx, ny);
-            if (degree < minDegree) {
+            if (degree < minDegree) {  // Choose move with the smallest degree
                 minDegree = degree;
                 bestMove = [nx, ny];
             }
         }
     }
 
-    return bestMove;
+    return bestMove;  // Return the best move
 }
 
 function countMoves(x, y) {
     let count = 0;
+    // Count how many valid moves are available from the current position
     for (let i = 0; i < 8; i++) {
         const nx = x + moveX[i];
         const ny = y + moveY[i];
         if (isWithinBounds(nx, ny) && board[nx][ny] === 0) {
-            count++;
+            count++;  // Increment count for valid moves
         }
     }
-    return count;
+    return count;  // Return the number of valid moves
 }
+
 
 
 

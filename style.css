@@ -522,6 +522,7 @@ p {
     text-align: center;
     box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.1);
     width: 400px;
+
 }
 
 #closeModalBtn {
@@ -594,6 +595,7 @@ p {
     font-size: 18px;
 }
 
+
 /* Game Rules Container */
 .rules {
     background-color: #152238;
@@ -619,7 +621,7 @@ p {
 #closeModalBtn2 {
     display: block; /* Center button inside modal */
     padding: 10px 20px;
-    margin: 20px auto 0; /* Center horizontally and add spacing */
+    margin: 0px auto 0; /* Center horizontally and add spacing */
     font-size: 20px;
     color: white;
     background-color: #3182ce;
