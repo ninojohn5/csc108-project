@@ -31,8 +31,9 @@
             <p id="slantedText">Embark on a journey with the knight!</p>
             <img src="img/knight.webp" alt="Knight" id="animatedKnight">
         </div>
-        <button id="startGameBtn">Start Game</button>
+        <button id="startGameBtn">Start Game</button>        
         <button id="CustomizeBoardBtn">Customize Board</button>
+
     </div>
 
     <!-- Cutomization Container -->
@@ -57,6 +58,35 @@
     
     <!-- Game Container -->
     <div id="game-container">
+
+    <!-- Modal -->
+    <div id="gamePromptModal" class="modal">
+    <div class="modal_content">
+        <h2>Knight's Tour Challenge</h2>
+             <p>Guide the knight across the board, visiting every square exactly once using its unique L-shaped movement. Plan your moves carefully to complete the tour!</p>
+             <div class="rules">
+                 <h3>Game Rules</h3>
+                 <ul>
+                     <li><strong>Objective:</strong> Visit all squares on the board exactly once.</li>
+                     <li><strong>Movement:</strong> The knight moves in an L-shape: Two squares in one direction, then one square perpendicular (or vice versa).</li>
+                     <li><strong>Rules:</strong>
+                         <ul>
+                             <li>No revisiting squares.</li>
+                             <li>You can adjust the board size.</li>
+                             <li>You can undo moves.</li>
+                             <li>You can use Auto-Play to finish the game.</li>
+                             <li>You can paused/resumed auto playing mode.</li>
+                             <li>You can reset the game anytime.</li>
+                             <li>You can customize the color of the board by clicking 'Customize Board' in the main menu.</li>
+                         </ul>
+                     </li>
+                 </ul>
+             </div>
+             <!-- Close Button -->
+             <button id="closeModalBtn2">Start Game</button>
+         </div>
+    </div>
+
         <h1>Knight's Tour Game</h1>
         
         <!-- Board size input -->

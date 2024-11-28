@@ -129,7 +129,7 @@ function calculatePossibleMoves(x, y) {
     // Only display the "Game over!" message if auto-play is NOT active
     if (possibleMoves.length === 0 && path.length !== rows * cols && !isAutoPlaying) {
         displayError(
-            `GAME OVER!\n\n You visited ${path.length} squares out of ${rows * cols} possible on a ${rows}x${cols} board.\n\nPress "Reset Game" or "Undo your last move" to continue. `
+            `GAME OVER! ☹️\n\n You visited ${path.length} squares out of ${rows * cols} possible on a ${rows}x${cols} board.\n\nPress "Reset Game" or "Undo your last move" to continue. `
         );
     }
 }
@@ -165,7 +165,7 @@ canvas.addEventListener('click', function (event) {
 
             if (path.length === rows * cols) {
                 displayCelebration();  // Trigger the celebration animation
-                displayError(`Congratulations!\n\n You've completed the Knight's Tour!\n\n Do you want to play again? Please press "Reset Game" to play again or press "Main Menu" to exit. `);
+                displayError(`Congratulations! 🎉\n\n You've completed the Knight's Tour!\n\n Do you want to play again? Please press "Reset Game" to play again or press "Main Menu" to exit. `);
             }
         }
     }
@@ -214,27 +214,27 @@ function displayError(message) {
         errorMessageElement.style.padding = '50px';
         errorMessageElement.style.border = '2px solid lightgreen';
     } else if (message.includes("Game over!") || message.includes("No solution exists")) {
-        errorMessageElement.style.backgroundColor = 'firebrick';
+        errorMessageElement.style.backgroundColor = 'crimson';
         errorMessageElement.style.padding = '50px';
         errorMessageElement.style.border = '2px solid lightcoral'; 
     } else if (message.includes("Please make one initial move")) {
-        errorMessageElement.style.backgroundColor = 'red';
+        errorMessageElement.style.backgroundColor = 'crimson';
         errorMessageElement.style.color = 'white';
         FadeOutErrorMessage(); 
     } else if (message.includes("No moves to undo!")){
-        errorMessageElement.style.backgroundColor = 'red';
+        errorMessageElement.style.backgroundColor = 'crimson';
         FadeOutErrorMessage();
     } else if (message.includes("Auto-Play paused.")){
-        errorMessageElement.style.backgroundColor = 'red';
+        errorMessageElement.style.backgroundColor = 'crimson';
         FadeOutErrorMessage();
     } else if (message.includes("Auto-Play resumed.")){
         errorMessageElement.style.backgroundColor = 'green';
         FadeOutErrorMessage();
     } else if (message.includes("Click 'Auto-Play' first.")){
-        errorMessageElement.style.backgroundColor = 'red';
+        errorMessageElement.style.backgroundColor = 'crimson';
         FadeOutErrorMessage();
     } else if (message.includes("Please enter valid positive numbers")){
-        errorMessageElement.style.backgroundColor = 'red';
+        errorMessageElement.style.backgroundColor = 'crimson';
         FadeOutErrorMessage();
     }
 }
@@ -391,7 +391,7 @@ function solveWarnsdorffAuto(x, y) {
     // Check if the board is already solved
     if (path.length === rows * cols) {
         displayCelebration();  // Trigger the celebration animation
-        displayError(`Congratulations!\n\n The Knight's Tour is already completed. \n\n Do you want to play again? Please press "Reset Game" to play again or press "Main Menu" to exit. `);
+        displayError(`Congratulations! 🎉\n\n The Knight's Tour is already completed. \n\n Do you want to play again? Please press "Reset Game" to play again or press "Main Menu" to exit. `);
         isAutoPlaying = false;
         return;
     }
@@ -407,7 +407,7 @@ function continueAutoPlay() {
     function nextMove(moveCount, x, y) {
         if (moveCount > rows * cols) {
             displayCelebration(); // Trigger the celebration animation
-            displayError(`Congratulations!\n\n The Knight's Tour is completed using Warnsdorff's mixed with backtrack Algorithm! \n\n Do you want to play again? Please press "Reset Game" to play again or press "Main Menu" to exit. `);
+            displayError(`Congratulations! 🎉\n\n The Knight's Tour is completed using Warnsdorff's mixed with backtrack Algorithm! \n\n Do you want to play again? Please press "Reset Game" to play again or press "Main Menu" to exit. `);
             isAutoPlaying = false;
             return;
         }
@@ -419,7 +419,7 @@ function continueAutoPlay() {
         // Find the best possible next move based on Warnsdorff's heuristic
         const next = findBestMove(x, y);
         if (!next) {
-            displayError(`GAME OVER!\n\nNo solution exists using Warnsdorff's mixed with backtrack Algorithm from this starting point. You visited ${moveCount - 1} squares out of ${rows * cols} possible on a ${rows}x${cols} board.\n\nPress "Reset Game" or "Undo your last move" to continue. `);
+            displayError(`GAME OVER! ☹️\n\nNo solution exists using Warnsdorff's mixed with backtrack Algorithm from this starting point. You visited ${moveCount - 1} squares out of ${rows * cols} possible on a ${rows}x${cols} board.\n\nPress "Reset Game" or "Undo your last move" to continue. `);
             isAutoPlaying = false;
             return false;
         }
@@ -509,7 +509,6 @@ const gameContainer = document.getElementById('game-container');
 const CustomizeBoardBtn = document.getElementById('CustomizeBoardBtn')
 const customization_container = document.getElementById('customization_container')
 
-
 // Main Menu button functionality
 MainMenuBtnCB.addEventListener('click', function () {
     introScreen.classList.add('visible'); // Show the intro screen
@@ -533,6 +532,15 @@ startGameBtn.addEventListener('click', function () {
     gameContainer.classList.add('visible');
     customization_container.style.opacity = "0";
     customization_container.style.pointerEvents = "none";
+
+    // Display the modal
+    const gamePromptModal = document.getElementById('gamePromptModal');
+    gamePromptModal.style.display = 'flex'; // Make modal visible
+
+    // Add a fade-in effect for the modal
+    setTimeout(() => {
+        gamePromptModal.style.opacity = '1';
+    }, 10); // Slight delay to allow for smooth transition
 });
 
 
@@ -637,6 +645,14 @@ saveButton.addEventListener('click', function() {
 closeModalBtn.addEventListener('click', function() {
     // Hide the modal when the "OK" button is clicked
     saveModal.style.display = 'none';
+});
+
+const closeModalBtn2 = document.getElementById('closeModalBtn2');
+
+closeModalBtn2.addEventListener('click', function() {
+    // Hide the modal when the "OK" button is clicked
+    const gamePromptModal = document.getElementById('gamePromptModal');
+    gamePromptModal.style.display = 'none';
 });
 
 
